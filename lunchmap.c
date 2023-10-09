@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 13:08:26 by otamrani          #+#    #+#             */
-/*   Updated: 2023/10/06 22:44:34 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/10/08 00:25:15 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,35 +140,33 @@ void draw_map_1(t_data *data)
        }
        y++;
    }
-    printf("[%f] [%f]\n", data->pos_x, data->pos_y);
+    printf("[%f] [%f]\n", data->pos_x / (1300 /20), data->pos_y / (900 /10));
     color = 0x000000;
-    // my_mlx_pixel_put(data, data->pos_x, data->pos_y, 0x000000);
     dst = data->addr + ((int)(data->pos_y)  * data->line_length + ((int)data->pos_x) * (data->bits_per_pixel / 8));
              *(unsigned int *)dst = color;
     mlx_put_image_to_window(data->mlx_ptr, data->mlx_win, data->img, 0, 0);
 }
 int move_player(int key, t_data *data)
 {
+    printf("%d\n", key);
     printf("%f  | %f\n", data->pos_x , data->pos_y);
     double x = data->pos_x;
+    int i = 0;
     double y = data->pos_y;
-    printf("{%d}+\n", key);
     if(key == 100)
     {
-        data->pos_x += cos(data->direction + M_PI_2) * 10;
-        data->pos_y += sin(data->direction + M_PI_2) * 10;
+        data->pos_x -= cos(data->direction + M_PI_2) * 10;
+        data->pos_y  -= sin(data->direction + M_PI_2) * 10;
     }
     if(key == 97)
     {
-        data->pos_x -= cos(data->direction + M_PI_2) * 10;
-        data->pos_y -= sin(data->direction + M_PI_2) * 10;
+        data->pos_x += cos(data->direction + M_PI_2) * 10;
+        data->pos_y += sin(data->direction + M_PI_2) * 10;
     }
     if(key == 119)
     {
      data->pos_y -=  sin(data->direction) * 10;
      data->pos_x -=  cos(data->direction) * 10;
-     printf("{sin = %f} cos = %f\n", sin(data->direction), cos(data->direction));
-     printf("{%f} {%f}\n", data->pos_x , data->pos_y);
     }
     else if(key == 115)
     {
@@ -177,25 +175,30 @@ int move_player(int key, t_data *data)
     }
     else if(key == 65361)
     {
-        data->direction -= 0.6;
-        // if(data->direction < 0)
-        //     data->direction = 2 * M_PI;
+         i = 1;
+        data->direction -= 0.2;
     }
     else if(key == 65363)
     {
-        data->direction += 0.6;
-        // if(data->direction > 2 * M_PI)
-        //     data->direction = 0;
+        i = 1;
+        data->direction += 0.2;
     }
-    if(x != data->pos_x || y != data->pos_y)
+    data->pos_x = floor(data->pos_x);
+    data->pos_y = floor(data->pos_y);
+    printf("=%f ---%f\n", data->pos_x / (1300 /20), data->pos_y / (900 /10));
+    if(map[(int)(data->pos_y / (900 / 10))][(int)data->pos_x / (1300 /20)] == 1)
     {
-    // map[y][x] = '0';
-    // map[data->pos_y][data->pos_x] = 'P';
+        printf("%d\n", map[(int)(data->pos_y / (900 /10))][(int)(data->pos_x / (1300 /20))]);
+        printf("here\n");
+        data->pos_x = x;
+        data->pos_y = y;
+        return (0);
+    }
+    if(!i)
+    {
     mlx_destroy_image(data->mlx_ptr, data->img);
     data->img = mlx_new_image(data->mlx_ptr, 1300, 900);
-    // my_mlx_pixel_put(data, data->pos_x, data->pos_y, 0x0000FF);
     draw_map_1(data);
-    // mlx_put_image_to_window(data->mlx_ptr, data->mlx_win, data->img, 0, 0);
     }
     return (0);
 }
