@@ -1,19 +1,23 @@
-CC = clang
+CC = cc
 CFLAGS = #-Wall -Werror -Wextra #-fsanitize=address -g3
 RM = rm -f
-FILES = lunchmap cub3d
-
-
-OBJ = $(FILES:=.o)
-
-
+FILES = lunchmap.c cub3d.c
+OBJ = $(FILES:.c=.o)
 NAME = cub3d
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
-	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -o $(NAME)
+UNAME = $(shell uname)
+ifeq ($(UNAME),Linux)
+    MLX_FLAGS = -lmlx -lXext -lX11 -lm
+endif
+ifeq ($(UNAME),Darwin)
+    MLX_FLAGS = -lmlx -framework OpenGL -framework AppKit
+endif
 
+
+$(NAME): $(FILES)
+	$(CC) $(CFLAGS) $(FILES) $(MLX_FLAGS) -o $(NAME)
 
 clean:
 	@$(RM) $(OBJ)
