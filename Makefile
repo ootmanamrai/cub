@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = #-Wall -Werror -Wextra #-fsanitize=address -g3
+CFLAGS =  -fsanitize=address  -g3 #-Wall -Werror -Wextra -fsanitize=address -g3
 RM = rm -f
 FILES = lunchmap.c cub3d.c
 OBJ = $(FILES:.c=.o)
