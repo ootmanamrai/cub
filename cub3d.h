@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 13:09:47 by otamrani          #+#    #+#             */
-/*   Updated: 2023/10/11 20:04:37 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/10/23 23:03:50 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <mlx.h>
 #include <math.h>
 #include <stdio.h>
+#include <limits.h>
 #if defined(__linux__)
     #define KEY_ESC 65307
     #define KEY_UP 5
@@ -41,6 +42,14 @@
 void    show_map();
 typedef struct	s_data {
 	double 	direction;
+    double x_ver;
+    double y_ver;
+    double x_hor;
+    double y_hor;
+    double x_low;
+    double y_low;
+    double found_wallh;
+    double found_wallv;
     double     fov;
     double    ray_x;
     double    ray_y;
@@ -61,6 +70,7 @@ typedef struct	s_data {
     double    y_to_check;
     double    x_intercept;
     double    y_intercept;
+    
 	double 	rotation_speed;
 	void	*mlx;
 	void	*mlx_win;
