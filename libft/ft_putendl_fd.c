@@ -1,20 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cub3d.c                                            :+:      :+:    :+:   */
+/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: oelboukh <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/29 23:11:15 by otamrani          #+#    #+#             */
-/*   Updated: 2023/09/29 23:11:21 by otamrani         ###   ########.fr       */
+/*   Created: 2022/10/25 14:45:49 by oelboukh          #+#    #+#             */
+/*   Updated: 2022/10/25 14:47:11 by oelboukh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "libft.h"
 
+void	ft_putendl_fd(char *s, int fd)
+{
+	int	i;
 
-int main(void) {
-    
-    show_map();
-    return 0;
+	if (!s)
+		return ;
+	i = 0;
+	while (s[i])
+	{
+		write(fd, &s[i], 1);
+		i++;
+	}
+	write(fd, "\n", 1);
 }

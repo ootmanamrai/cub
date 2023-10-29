@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 13:09:47 by otamrani          #+#    #+#             */
-/*   Updated: 2023/10/23 23:03:50 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/10/29 13:15:48 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <limits.h>
+#include "../file.h"
 #if defined(__linux__)
     #define KEY_ESC 65307
     #define KEY_UP 5
@@ -48,6 +49,8 @@ typedef struct	s_data {
     double y_hor;
     double x_low;
     double y_low;
+    double dist_proj_plane;
+    double *all_rays;
     double found_wallh;
     double found_wallv;
     double     fov;
@@ -82,6 +85,8 @@ typedef struct	s_data {
 	int		bits_per_pixel;
 	int		line_length;
 	int		endian;
+    t_all *all;
+    t_textr *txt;
 }				t_data;
 
 #endif
