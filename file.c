@@ -33,9 +33,9 @@ void init_befor_init_hh(t_textr **txtr)
 }
 int start_reading_map(char *line)
 {
-    if(!strnstr(line, "NO", ft_strlen(line)) && !strnstr(line, "SO", ft_strlen(line)) &&\
-    !strnstr(line, "WE", ft_strlen(line)) && !strnstr(line, "EA", ft_strlen(line)) &&\
-    !strnstr(line, "F", ft_strlen(line)) && !strnstr(line, "C", ft_strlen(line)))
+    if(!ft_strnstr(line, "NO", ft_strlen(line)) && !ft_strnstr(line, "SO", ft_strlen(line)) &&\
+    !ft_strnstr(line, "WE", ft_strlen(line)) && !ft_strnstr(line, "EA", ft_strlen(line)) &&\
+    !ft_strnstr(line, "F", ft_strlen(line)) && !ft_strnstr(line, "C", ft_strlen(line)))
         return (-1);
     return(0);
 }
