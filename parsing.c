@@ -80,38 +80,38 @@ void init_txters(t_textr **txtr, t_all *all)
     {
         if(start_reading_map(all->map[i]) == -1)
                 break;
-        if(ft_strnstr(all->map[i], "NO", 2))
+        if(strnstr(all->map[i], "NO", 2))
         {
             x++;
             (*txtr)->NO = ft_split(ft_strdup((all->map[i])), ' ');
             all->map[i] = NULL;
         }
-        else if(ft_strnstr(all->map[i], "SO", 2))
+        else if(strnstr(all->map[i], "SO", 2))
         {
             x++;
             (*txtr)->SO = ft_split(ft_strdup((all->map[i])), ' ');
             all->map[i] = NULL;
         }
-        else if(ft_strnstr(all->map[i], "WE", 2))
+        else if(strnstr(all->map[i], "WE", 2))
         {
             x++;
             (*txtr)->WE = ft_split(ft_strdup((all->map[i])), ' ');
             all->map[i] = NULL;
         }
-       else if(ft_strnstr(all->map[i], "EA", 2))
+       else if(strnstr(all->map[i], "EA", 2))
        {
             x++;
             (*txtr)->EA = ft_split(ft_strdup((all->map[i])), ' ');
             all->map[i] = NULL;
        }
-        else if(ft_strnstr(all->map[i], "F", 1))
+        else if(strnstr(all->map[i], "F", 1))
         {
 
             x++;
             (*txtr)->color_f = ft_split(ft_strdup((all->map[i])), ' ');
            all->map[i] = NULL;
         }
-        else if(ft_strnstr(all->map[i], "C", 1))
+        else if(strnstr(all->map[i], "C", 1))
         {
             x++;
             (*txtr)->color_c = ft_split(ft_strdup((all->map[i])), ' ');

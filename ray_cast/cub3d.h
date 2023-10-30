@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 13:09:47 by otamrani          #+#    #+#             */
-/*   Updated: 2023/10/29 13:15:48 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/10/30 23:44:54 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,10 @@
     #define KEY_D 2
 #endif
 void    show_map();
+
 typedef struct	s_data {
 	double 	direction;
+    double *mytable;
     double x_ver;
     double y_ver;
     double x_hor;

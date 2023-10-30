@@ -49,8 +49,8 @@ int check_if_close(char **map)
 
   i = 0;
   x  = 0;
-   if(i == 0 && (ft_strnstr(map[i], "0", strlen(map[i]) - 1) ||  ft_strnstr(map[i], "N", strlen(map[i]) - 1) ||\
-   ft_strnstr(map[i], "S", strlen(map[i]) - 1) || ft_strnstr(map[i], "E", strlen(map[i]) - 1) || ft_strnstr(map[i], "W", strlen(map[i]) - 1)))
+   if(i == 0 && (strnstr(map[i], "0", strlen(map[i]) - 1) ||  strnstr(map[i], "N", strlen(map[i]) - 1) ||\
+   strnstr(map[i], "S", strlen(map[i]) - 1) || strnstr(map[i], "E", strlen(map[i]) - 1) || strnstr(map[i], "W", strlen(map[i]) - 1)))
    {
     printf("not close - \n");
     return -1;
@@ -77,8 +77,8 @@ int check_if_close(char **map)
     i++;
   }
   i--;
-  if((ft_strnstr(map[i], "0", strlen(map[i])) ||  ft_strnstr(map[i], "N", strlen(map[i])) ||\
-   ft_strnstr(map[i], "S", strlen(map[i])) || ft_strnstr(map[i], "E", strlen(map[i])) || ft_strnstr(map[i], "W", strlen(map[i]))))
+  if((strnstr(map[i], "0", strlen(map[i])) ||  strnstr(map[i], "N", strlen(map[i])) ||\
+   strnstr(map[i], "S", strlen(map[i])) || strnstr(map[i], "E", strlen(map[i])) || strnstr(map[i], "W", strlen(map[i]))))
    {
     printf("not close \n");
     return -1;

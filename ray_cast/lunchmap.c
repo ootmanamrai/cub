@@ -27,8 +27,8 @@ void my_mlx_pixel_put(t_data *data, int x, int y, int color)
     char *dst;
     int rect_x;
     int rect_y;
-    int y1 = (900 / data->all->y_of_map) * 0.2;
-    int x1 = (1300 / data->all->x_of_map) * 0.2;
+    int y1 = (900 / data->all->y_of_map) *0.2;
+    int x1 = (1300 / data->all->x_of_map) *0.2;
     rect_x = x * x1;
     rect_y = y * y1;
     int i = rect_x;
@@ -51,13 +51,13 @@ void draw_line(t_data *data, double x_intercept, double y_intercept)
 
     // Assuming that mlx_ptr and win_ptr are properly initialized
     char *dst;
-    double dx = x_intercept - (data->pos_x * 0.2);
-    double dy = y_intercept - (data->pos_y * 0.2);
+    double dx = x_intercept - (data->pos_x *0.2);
+    double dy = y_intercept - (data->pos_y*0.2 );
     double steps = (fabs(dx) > fabs(dy)) ? fabs(dx) : fabs(dy);
     double xIncrement = dx / steps;
     double yIncrement = dy / steps;
-    double x = data->pos_x * 0.2;
-    double y = data->pos_y * 0.2;
+    double x = data->pos_x *0.2;
+    double y = data->pos_y*0.2 ;
 
     for (int i = 0; i < steps; i++) {
         // printf("xx= %f yy= %f\n", x, y);
@@ -98,7 +98,7 @@ void vert_cord(t_data *data, double direction)
     data->found_wallv = 0;
     ray_angle = direction;
     x_intercept = floor(data->pos_x / (1300 / data->all->x_of_map)) * (1300 / data->all->x_of_map);
-    x_intercept += (getFacingDirection(ray_angle) == 1) ? (1300 / data->all->x_of_map) : -0.00001;
+    x_intercept += (getFacingDirection(ray_angle) == 1) ? (1300 / data->all->x_of_map) : -0.00000001;
     y_intercept = data->pos_y + (x_intercept - data->pos_x) * tan(ray_angle);
     x_step = (1300 / data->all->x_of_map);
     // printf("%f\n", x_step);
@@ -115,7 +115,7 @@ void vert_cord(t_data *data, double direction)
     {
         int x = x_intercept / (1300 / data->all->x_of_map);
         int y = y_intercept / (900 / data->all->y_of_map);
-        if ((y < data->all->y_of_map && x < data->all->x_of_map && data->all->map[y][x] == '1') || data->all->map[((int)(y_intercept)) / (900 / data->all->y_of_map)][x] == '1' || data->all->map[(((int)(y_intercept)) / (900 / data->all->y_of_map))][x] == '1')
+        if ((y < data->all->y_of_map && x < data->all->x_of_map && data->all->map[y][x] == '1'))
         {
             // printf("x in = %d y in = %d\n", x, y);
             // printf("x_step = %f y_step = %f\n", x_step, y_step);
@@ -147,7 +147,8 @@ void vert_cord(t_data *data, double direction)
         data->distance = distancev;
     }
     data->distance *= cos(data->direction - direction);
-    draw_line(data, data->wall_hit_x * 0.2 , data->wall_hit_y * 0.2);
+    printf("pos_x = %f pos_y = %f\n", data->pos_x, data->pos_y);
+    draw_line(data, data->wall_hit_x * 0.2, data->wall_hit_y * 0.2);
 }
 void draw_ray(t_data *data, double direction)
 {
@@ -165,7 +166,7 @@ void draw_ray(t_data *data, double direction)
     if(getupdown(ray_angle) == 1)
         y_intercept += (900 / data->all->y_of_map);
     if(getupdown(ray_angle) == 2)
-        y_intercept -= 0.00000001;
+        y_intercept -= 0.000001;
     x_intercept = data->pos_x + (y_intercept - data->pos_y) / tan(ray_angle);
     // if (ray_angle == 0)
     //     x_intercept = 1300 / data->all->x_of_map;
@@ -192,7 +193,7 @@ void draw_ray(t_data *data, double direction)
     {
         int x = x_intercept / (1300 / data->all->x_of_map);
         int y = y_intercept / (900 / data->all->y_of_map);
-        if ((y < data->all->y_of_map && x < data->all->x_of_map && data->all->map[y][x] == '1') || data->all->map[y][((int)x_intercept) / (1300 / data->all->x_of_map)] == '1' || data->all->map[y][(((int)x_intercept) / (1300 / data->all->x_of_map))] == '1')
+        if ((y < data->all->y_of_map && x < data->all->x_of_map && data->all->map[y][x] == '1'))
         {
             data->found_wallh = 1;
             break;
@@ -211,7 +212,6 @@ void draw_ray(t_data *data, double direction)
     // printf("%f && %f\n", round(x_intercept / (1300 /data->all->x_of_map)), round(y_intercept / (900 / data->all->y_of_map)));
     // printf("%f\n", floor(y_intercept));
     vert_cord(data, direction);
-    // draw_line(data, round(x_intercept) , round(y_intercept), dst);
 }
 void draw_wall(t_data *data)
 {
@@ -223,8 +223,12 @@ void draw_wall(t_data *data)
    while(x_srart < 1300)
    {
     data->dist_proj_plane = (900 / 2) / tan(data->fov / 2);
-    data->wall_height = (65 / data->all_rays[x_srart]) * data->dist_proj_plane;
+    data->wall_height = ((900 / 10) / data->all_rays[x_srart]) * data->dist_proj_plane;
     y_start = (900 / 2) - (data->wall_height / 2);
+    if(y_start < 0)
+        y_start = 0;
+    if(data->wall_height > 900)
+        data->wall_height = 900;
        while(y_start < (900 / 2) + (data->wall_height / 2))
        {
             dst = data->addr + (y_start * data->line_length + x_srart * (data->bits_per_pixel / 8));
@@ -241,6 +245,9 @@ void draw_map(t_data *data)
     char *dst;
     int y = 0;
     int t = 0;
+    data->fov = 60 * (M_PI / 180);
+    data->ray_angle = data->direction - (data->fov / 2);
+     data->all_rays = malloc(sizeof(double) * 1300);
     while (t < 1300 * 900)
     {
         char *dst;
@@ -248,9 +255,18 @@ void draw_map(t_data *data)
             *(unsigned int *)dst = 0x000000;
             t++;
     }
-    data->fov = 60 * (M_PI / 180);
-    data->ray_angle = data->direction - (data->fov / 2);
-   data->all_rays = malloc(sizeof(double) * 1300);
+
+    while(i < 1300)
+    {
+    if(data->ray_angle > 2 * M_PI)
+        data->ray_angle = data->ray_angle - 2 * M_PI;
+    draw_ray(data, data->ray_angle);
+    data->ray_angle += data->fov / 1300;
+    data->all_rays[i] = data->distance;
+    printf("%d-----///\n", i);
+    i++;
+    }
+    draw_wall(data);
     int color;
    while(y < data->all->y_of_map)
    {
@@ -264,10 +280,11 @@ void draw_map(t_data *data)
        y++;
    }
     color = 0x000000;
-    printf("%f| %f\n", data->pos_x, data->pos_y);
     dst = data->addr + ((int)(data->pos_y * 0.2) * data->line_length + ((int)(data->pos_x * 0.2) * (data->bits_per_pixel / 8)));
              *(unsigned int *)dst = color;
-    draw_ray(data, data->direction);
+    i  = 0;
+    data->fov = 60 * (M_PI / 180);
+    data->ray_angle = data->direction - (data->fov / 2);
     while(i < 1300)
     {
      printf("ray_angle=============================== = %f\n", data->ray_angle);
@@ -278,7 +295,6 @@ void draw_map(t_data *data)
     data->all_rays[i] = data->distance;
     i++;
     }
-    draw_wall(data);
     mlx_put_image_to_window(data->mlx_ptr, data->mlx_win, data->img, 0, 0);
 }
 
@@ -293,21 +309,21 @@ int move_player(int key, t_data *data)
         exit(0);
     if(key == 0)
     {
-        data->pos_x -= cos(data->direction + M_PI_2) * 50;//speed movement was data->all->y_of_map
-        data->pos_y  -= sin(data->direction + M_PI_2) * 50;
+        data->pos_x -= cos(data->direction + M_PI_2) * 15;//speed movement was data->all->y_of_map
+        data->pos_y  -= sin(data->direction + M_PI_2) * 15;
     }
     if(key == 2)
     {
-        data->pos_x += cos(data->direction + M_PI_2) * 50;
-        data->pos_y += sin(data->direction + M_PI_2) * 50;
+        data->pos_x += cos(data->direction + M_PI_2) * 15;
+        data->pos_y += sin(data->direction + M_PI_2) * 15;
     }
     else if(key == 1 || key == 13)
     {
         direction = data->direction;
         if(key == 1)
             direction = data->direction + M_PI;
-        data->pos_y += sin(direction) * 50;
-        data->pos_x += cos(direction) * 50;
+        data->pos_y += sin(direction) * 15;
+        data->pos_x += cos(direction) * 15;
     }
     else if(key == 123)
     {
@@ -367,10 +383,11 @@ void show_map(t_all *all, t_textr *txt)
 {
     t_data *data;
     data = malloc(sizeof(t_data));
+    data->mytable = malloc(sizeof(double) * (1300 * 2));
     data->all = all;
     data->txt = txt;
     all->x_of_map = all->longest_line;
-    data->direction =  3 * M_PI / 2;
+    data->direction =  0.5;
     // data->pos_x = 0;
     // data->pos_y = 0;
     find_player_position(all, data);
