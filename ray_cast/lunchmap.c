@@ -27,8 +27,8 @@ void my_mlx_pixel_put(t_data *data, int x, int y, int color)
     char *dst;
     int rect_x;
     int rect_y;
-    int y1 = (900 / data->all->y_of_map) *0.2;
-    int x1 = (1300 / data->all->x_of_map) *0.2;
+    int y1 = (900 / data->all->y_of_map) ;
+    int x1 = (1300 / data->all->x_of_map) ;
     rect_x = x * x1;
     rect_y = y * y1;
     int i = rect_x;
@@ -51,13 +51,13 @@ void draw_line(t_data *data, double x_intercept, double y_intercept)
 
     // Assuming that mlx_ptr and win_ptr are properly initialized
     char *dst;
-    double dx = x_intercept - (data->pos_x *0.2);
-    double dy = y_intercept - (data->pos_y*0.2 );
+    double dx = (x_intercept - (data->pos_x )) ;
+    double dy = (y_intercept - (data->pos_y));
     double steps = (fabs(dx) > fabs(dy)) ? fabs(dx) : fabs(dy);
     double xIncrement = dx / steps;
     double yIncrement = dy / steps;
-    double x = data->pos_x *0.2;
-    double y = data->pos_y*0.2 ;
+    double x = data->pos_x ;
+    double y = data->pos_y;
 
     for (int i = 0; i < steps; i++) {
         // printf("xx= %f yy= %f\n", x, y);
@@ -147,8 +147,8 @@ void vert_cord(t_data *data, double direction)
         data->distance = distancev;
     }
     data->distance *= cos(data->direction - direction);
-    printf("pos_x = %f pos_y = %f\n", data->pos_x, data->pos_y);
-    draw_line(data, data->wall_hit_x * 0.2, data->wall_hit_y * 0.2);
+    // printf("pos_x = %f pos_y = %f\n", data->pos_x, data->pos_y);
+    draw_line(data, data->wall_hit_x , data->wall_hit_y );
 }
 void draw_ray(t_data *data, double direction)
 {
@@ -247,7 +247,7 @@ void draw_map(t_data *data)
     int t = 0;
     data->fov = 60 * (M_PI / 180);
     data->ray_angle = data->direction - (data->fov / 2);
-     data->all_rays = malloc(sizeof(double) * 1300);
+    data->all_rays = malloc(sizeof(double) * 1300);
     while (t < 1300 * 900)
     {
         char *dst;
@@ -263,7 +263,6 @@ void draw_map(t_data *data)
     draw_ray(data, data->ray_angle);
     data->ray_angle += data->fov / 1300;
     data->all_rays[i] = data->distance;
-    printf("%d-----///\n", i);
     i++;
     }
     draw_wall(data);
@@ -280,19 +279,19 @@ void draw_map(t_data *data)
        y++;
    }
     color = 0x000000;
-    dst = data->addr + ((int)(data->pos_y * 0.2) * data->line_length + ((int)(data->pos_x * 0.2) * (data->bits_per_pixel / 8)));
+    dst = data->addr + ((int)(data->pos_y ) * data->line_length + ((int)(data->pos_x) * (data->bits_per_pixel / 8)));
              *(unsigned int *)dst = color;
     i  = 0;
     data->fov = 60 * (M_PI / 180);
     data->ray_angle = data->direction - (data->fov / 2);
-    while(i < 1300)
+    while(i < 1)
     {
-     printf("ray_angle=============================== = %f\n", data->ray_angle);
     if(data->ray_angle > 2 * M_PI)
         data->ray_angle = data->ray_angle - 2 * M_PI;
     draw_ray(data, data->ray_angle);
+    // draw_line(data, data->wall_hit_x * 0.2, data->wall_hit_y * 0.2);
     data->ray_angle += data->fov / 1300;
-    data->all_rays[i] = data->distance;
+    // data->all_rays[i] = data->distance;
     i++;
     }
     mlx_put_image_to_window(data->mlx_ptr, data->mlx_win, data->img, 0, 0);
@@ -305,35 +304,35 @@ int move_player(int key, t_data *data)
     printf("%f  | %f\n", data->pos_x , data->pos_y);
     double x = data->pos_x;
     double y = data->pos_y;
-    if(key == 53)
+    if(key == 53 || key == KEY_ESC)
         exit(0);
-    if(key == 0)
+    if(key == KEY_A)
     {
         data->pos_x -= cos(data->direction + M_PI_2) * 15;//speed movement was data->all->y_of_map
         data->pos_y  -= sin(data->direction + M_PI_2) * 15;
     }
-    if(key == 2)
+    if(key == KEY_D)
     {
         data->pos_x += cos(data->direction + M_PI_2) * 15;
         data->pos_y += sin(data->direction + M_PI_2) * 15;
     }
-    else if(key == 1 || key == 13)
+    else if(key == KEY_S || key == KEY_W)
     {
         direction = data->direction;
-        if(key == 1)
+        if(key == KEY_S)
             direction = data->direction + M_PI;
         data->pos_y += sin(direction) * 15;
         data->pos_x += cos(direction) * 15;
     }
-    else if(key == 123)
+    else if(key == KEY_LEFT)
     {
-        data->direction -= 0.2;
+        data->direction -= 0.02;
         if(data->direction < 0)
             data->direction = 2 * M_PI + data->direction;
     }
-    else if(key == 124)
+    else if(key == KEY_RIGHT)
     {
-        data->direction += 0.2;
+        data->direction += 0.02;
         if(data->direction > 2 * M_PI )
             data->direction = data->direction - 2 * M_PI;
         printf("direction ==   v%f\n", data->direction);

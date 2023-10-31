@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 13:09:47 by otamrani          #+#    #+#             */
-/*   Updated: 2023/10/30 23:44:54 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/10/31 12:40:33 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <limits.h>
-#include "../file.h"
+#include "./file.h"
 #if defined(__linux__)
     #define KEY_ESC 65307
     #define KEY_UP 5
