@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 16:30:44 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/06 02:51:22 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/06 02:53:08 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -301,13 +301,13 @@ void draw_wall(t_data *data)
         y_img = 0;
        while(y_start < (900 / 2) + (data->wall_height / 2))
        {
-            if(data->check == 1)
+            if(data->checke[x_start] == 1)
             {
                  x_img = ((data->all_yrays[x_start] / y1) - floor(data->all_yrays[x_start]  / y1)) * (data->img_width);
             // printf("x_start = %f\n", x_img);
             //    printf("x_start = %d\n", x_img);
             }
-            else if(data->check == 0)
+            else if(data->checke[x_start] == 0)
                 x_img = ((data->all_xrays[x_start] / x1) - floor(data->all_xrays[x_start]  / x1)) * (data->img_width);
             dst = data->addr + (y_start * data->line_length + x_start * (data->bits_per_pixel / 8));
             y_img += data->img_height / data->wall_height;
