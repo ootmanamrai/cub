@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 16:30:44 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/06 02:53:08 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/07 00:58:44 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,8 +259,11 @@ int get_pixel_color(t_data *data, int x, int y)
 {
     int color;
     char *pixel;
+    // if(x < 0 || y < 0 || x >= data->img_width || y >= data->img_height)
+    //     return (0);
     pixel = data->img_data + (y * data->img_len + x * (data->img_bits / 8));
     // printf("x= %d y = %d\n",x , y);
+    // printf("x_fd = %d y_fd = %d\n",data->img_width , data->img_height);
     color = *(unsigned int *)pixel;
     return color;
 }
@@ -278,49 +281,58 @@ void initail_image(t_data *data)
 //             dst = data->addr + (y_start * data->line_length + x_start * (data->bits_per_pixel / 8));
 //             char *src = image->addr + (y_image * image->line_length + x_image * (image->bits_per_pixel / 8));
 //             *(unsigned int *)dst = *(unsigned int *)src;
-void draw_wall(t_data *data)
-{
+void draw_wall(t_data *data) {
     int y_start;
     int x_start = 0;
     double x1 = 1300 / data->all->x_of_map;
     double y1 = 900 / data->all->y_of_map;
     char *dst;
+    int m = 0;
     data->y_img = 0;
     double x_img = 0;
     double y_img = 0;
+    int j = 0;
     initail_image(data);
-   while(x_start < 1300)
-   {
-    data->dist_proj_plane = (900 / 2) / tan(data->fov / 2);
-    data->wall_height = ((900 / 10) / data->all_rays[x_start]) * data->dist_proj_plane;
-    y_start = (900 / 2) - (data->wall_height / 2);
-    if(y_start < 0)
-        y_start = 0;
-    if(data->wall_height > 900)
-        data->wall_height = 900;
+
+    while (x_start < 1300) {
+        data->dist_proj_plane = (900 / 2) / tan(data->fov / 2);
+        data->wall_height = ((900 / 10) / data->all_rays[x_start]) * data->dist_proj_plane;
+        y_start = (900 / 2) - (data->wall_height / 2);
+        if (y_start < 0)
+            y_start = 0;
         y_img = 0;
-       while(y_start < (900 / 2) + (data->wall_height / 2))
-       {
-            if(data->checke[x_start] == 1)
-            {
-                 x_img = ((data->all_yrays[x_start] / y1) - floor(data->all_yrays[x_start]  / y1)) * (data->img_width);
-            // printf("x_start = %f\n", x_img);
-            //    printf("x_start = %d\n", x_img);
-            }
-            else if(data->checke[x_start] == 0)
-                x_img = ((data->all_xrays[x_start] / x1) - floor(data->all_xrays[x_start]  / x1)) * (data->img_width);
+
+        if (data->wall_height > 900) {
+            m = 900;
+            j = 1;
+            y_img = (data->wall_height - 900) / 2 / data->wall_height * data->img_height;
+            // data->wall_height = 899;
+        } else
+            m = (900 / 2) + (data->wall_height / 2);
+
+        while (y_start < m) {
+            if (data->checke[x_start] == 1) {
+                x_img = ((data->all_yrays[x_start] / y1) - floor(data->all_yrays[x_start] / y1)) * data->img_width;
+            } else if (data->checke[x_start] == 0)
+                x_img = ((data->all_xrays[x_start] / x1) - floor(data->all_xrays[x_start] / x1)) * data->img_width;
             dst = data->addr + (y_start * data->line_length + x_start * (data->bits_per_pixel / 8));
-            y_img += data->img_height / data->wall_height;
+
             if (y_img >= data->img_height)
                 y_img = data->img_height - 1;
-            if(x_img >= data->img_width)
+            if (x_img >= data->img_width)
                 x_img = data->img_width - 1;
+
+            if (y_start >= 900)
+                break;
+
             *(unsigned int *)dst = get_pixel_color(data, (int)x_img, (int)y_img);
+            y_img += data->img_height / data->wall_height;
             y_start++;
-       }
-       x_start++;
-   }
+        }
+        x_start++;
+    }
 }
+
 void draw_map(t_data *data)
 {
     int x = 0;
@@ -355,37 +367,37 @@ void draw_map(t_data *data)
     data->all_xrays[i] = data->wall_hit_x;
     data->all_yrays[i] = data->wall_hit_y;
     data->checke[i] = data->check;
-    printf("%d\n", data->checke[i]);
+    // printf("%d\n", data->checke[i]);
     i++;
     }
     draw_wall(data);
     int color;
-//    while(y < data->all->y_of_map)
-//    {
-//        x = 0;
-//        while(x < data->all->longest_line)
-//        {
-//            color = (data->all->map[y][x] == '1') ? 0x000000 : 0xFFFFFF;
-//            my_mlx_pixel_put(data, x, y, color);
-//            x++;
-//        }
-//        y++;
-//    }
-//     color = 0x000000;
-//     dst = data->addr + ((int)(data->pos_y * 0.2) * data->line_length + ((int)(data->pos_x * 0.2) * (data->bits_per_pixel / 8)));
-//              *(unsigned int *)dst = color;
-//     i  = 0;
-//     data->fov = 60 * (M_PI / 180);
-//     data->ray_angle = data->direction - (data->fov / 2);
-    // while(i < 1300)
-    // {
-    // if(data->ray_angle > 2 * M_PI)
-    //     data->ray_angle = data->ray_angle - 2 * M_PI;
-    // draw_ray(data, data->ray_angle);
-    // data->ray_angle += data->fov / 1300;
-    // data->all_rays[i] = data->distance;
-    // i++;
-    // }
+   while(y < data->all->y_of_map)
+   {
+       x = 0;
+       while(x < data->all->longest_line)
+       {
+           color = (data->all->map[y][x] == '1') ? 0x000000 : 0xFFFFFF;
+           my_mlx_pixel_put(data, x, y, color);
+           x++;
+       }
+       y++;
+   }
+    color = 0x000000;
+    dst = data->addr + ((int)(data->pos_y * 0.2) * data->line_length + ((int)(data->pos_x * 0.2) * (data->bits_per_pixel / 8)));
+             *(unsigned int *)dst = color;
+    i  = 0;
+    data->fov = 60 * (M_PI / 180);
+    data->ray_angle = data->direction - (data->fov / 2);
+    while(i < 1300)
+    {
+    if(data->ray_angle > 2 * M_PI)
+        data->ray_angle = data->ray_angle - 2 * M_PI;
+    draw_ray(data, data->ray_angle);
+    data->ray_angle += data->fov / 1300;
+    data->all_rays[i] = data->distance;
+    i++;
+    }
     mlx_put_image_to_window(data->mlx_ptr, data->mlx_win, data->img, 0, 0);
 }
 int player_collision(t_data *data)
@@ -527,7 +539,7 @@ void show_map(t_all *all, t_textr *txt)
     data->all = all;
     data->txt = txt;
     all->x_of_map = all->longest_line;
-    data->direction =  M_PI_2;
+    data->direction =  3 * M_PI / 2;
     data->all_xrays = malloc(sizeof(double) * 1300);
     data->all_yrays = malloc(sizeof(double) *1300);
     find_player_position(all, data);
