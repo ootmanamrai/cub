@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 16:30:44 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/06 01:26:34 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/06 02:51:22 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int getFacingDirection(double direction) {
 
 
 
-void vert_cord(t_data *data, double direction)
+void  vert_cord(t_data *data, double direction)
 {
     double x_intercept;
     double y_intercept;
@@ -148,6 +148,7 @@ void vert_cord(t_data *data, double direction)
         data->distance = distancev;
     }
     data->distance *= cos(data->direction - direction);
+
     // draw_line(data, data->wall_hit_x * 0.2, data->wall_hit_y * 0.2);
 }
 void draw_ray(t_data *data, double direction)
@@ -259,7 +260,7 @@ int get_pixel_color(t_data *data, int x, int y)
     int color;
     char *pixel;
     pixel = data->img_data + (y * data->img_len + x * (data->img_bits / 8));
-    printf("x= %d y = %d\n",x , y);
+    // printf("x= %d y = %d\n",x , y);
     color = *(unsigned int *)pixel;
     return color;
 }
@@ -281,12 +282,12 @@ void draw_wall(t_data *data)
 {
     int y_start;
     int x_start = 0;
-    int x1 = 1300 / data->all->x_of_map;
-    int y1 = 900 / data->all->y_of_map;
+    double x1 = 1300 / data->all->x_of_map;
+    double y1 = 900 / data->all->y_of_map;
     char *dst;
     data->y_img = 0;
-    int x_img = 0;
-    int y_img = 0;
+    double x_img = 0;
+    double y_img = 0;
     initail_image(data);
    while(x_start < 1300)
    {
@@ -297,15 +298,24 @@ void draw_wall(t_data *data)
         y_start = 0;
     if(data->wall_height > 900)
         data->wall_height = 900;
+        y_img = 0;
        while(y_start < (900 / 2) + (data->wall_height / 2))
        {
-            if(data->check)
-               x_img = ((data->all_yrays[x_start] / y1) - floor(data->all_yrays[x_start]  / y1)) * (data->img_width);
-            else
+            if(data->check == 1)
+            {
+                 x_img = ((data->all_yrays[x_start] / y1) - floor(data->all_yrays[x_start]  / y1)) * (data->img_width);
+            // printf("x_start = %f\n", x_img);
+            //    printf("x_start = %d\n", x_img);
+            }
+            else if(data->check == 0)
                 x_img = ((data->all_xrays[x_start] / x1) - floor(data->all_xrays[x_start]  / x1)) * (data->img_width);
             dst = data->addr + (y_start * data->line_length + x_start * (data->bits_per_pixel / 8));
             y_img += data->img_height / data->wall_height;
-            *(unsigned int *)dst = get_pixel_color(data, x_img, y_img);
+            if (y_img >= data->img_height)
+                y_img = data->img_height - 1;
+            if(x_img >= data->img_width)
+                x_img = data->img_width - 1;
+            *(unsigned int *)dst = get_pixel_color(data, (int)x_img, (int)y_img);
             y_start++;
        }
        x_start++;
@@ -330,9 +340,9 @@ void draw_map(t_data *data)
         char *dst;
         dst = data->addr + (t * (data->bits_per_pixel / 8));
         if(t < 450 * 1300)
-            *(unsigned int *)dst = sky;
+            *(unsigned int *)dst = 0x0000FF;
         else
-            *(unsigned int *)dst = gorund;
+            *(unsigned int *)dst = 0x00FF00;
             t++;
     }
     while(i < 1300)
@@ -344,6 +354,8 @@ void draw_map(t_data *data)
     data->all_rays[i] = data->distance;
     data->all_xrays[i] = data->wall_hit_x;
     data->all_yrays[i] = data->wall_hit_y;
+    data->checke[i] = data->check;
+    printf("%d\n", data->checke[i]);
     i++;
     }
     draw_wall(data);
@@ -511,6 +523,7 @@ void show_map(t_all *all, t_textr *txt)
     t_data *data;
     data = malloc(sizeof(t_data));
     data->mytable = malloc(sizeof(double) * (1300 * 2));
+    data->checke = malloc(sizeof(int) * 1300);
     data->all = all;
     data->txt = txt;
     all->x_of_map = all->longest_line;

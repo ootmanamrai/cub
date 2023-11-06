@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 13:09:47 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/06 00:52:12 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/06 02:50:05 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef struct	s_data {
     char *img_data;
     void *img_ptr;
     int y_img;
+    int *checke;
     double *all_xrays;
     double *all_yrays;
     int img_bits;
