@@ -1,8 +1,8 @@
 
-NO ./path_to_the_north_texture
-SO ./path_to_the_south_texture
-WE ./path_to_the_west_texture
-EA ./path_to_the_east_texture
+NO /nfs/homes/otamrani/Desktop/n/cub_3d/cub3d/ray_cast/images.xpm
+SO /nfs/homes/otamrani/Desktop/n/cub_3d/cub3d/ray_cast/images.xpm
+WE /nfs/homes/otamrani/Desktop/n/cub_3d/cub3d/ray_cast/images.xpm
+EA /nfs/homes/otamrani/Desktop/n/cub_3d/cub3d/ray_cast/images.xpm
 
 F 0,255,255
 C 150,75,0

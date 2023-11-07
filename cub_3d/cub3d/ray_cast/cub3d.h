@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 13:09:47 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/06 02:50:05 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/07 23:37:56 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,17 +45,19 @@ void    show_map();
 typedef struct	s_data {
 	double 	direction;
     int check;
-    char *img_data;
-    void *img_ptr;
+    int *ntext;
+    int key_press;
+    char **img_data;
+    void **img_ptr;
     int y_img;
     int *checke;
     double *all_xrays;
     double *all_yrays;
-    int img_bits;
-    int img_len;
-    int img_end;
-    int img_width;
-    int img_height;
+    int *img_bits;
+    int *img_len;
+    int *img_end;
+    int *img_width;
+    int *img_height;
     double *mytable;
     double x_ver;
     double y_ver;
