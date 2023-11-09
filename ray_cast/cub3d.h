@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 13:09:47 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/09 13:44:35 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/09 16:32:37 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@
     #define KEY_A 0
     #define KEY_S 1
     #define KEY_D 2
-    #define SPEED 10
+    #define SPEED 5
     #define SIDES_SPEED 10
     #define ROTATION_ANGLE 0.1
     #define SHIFT 0

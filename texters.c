@@ -102,12 +102,10 @@ int ft_atoi_num(t_textr *txt)
         return (-1);
     return 0;
 }
-
 unsigned int RGBtoUint8(int R, int G, int B) 
 {
-    if(SHIFT == 1)
-        return ((0xFF << 24) | (R << 16) | (G << 8) | B);
-    return ((B << 24) | (G << 16) | (R << 8) | 0xFF);
+  
+        return ((R << 16) | (G << 8) | B);
 }
 
 void get_colers(t_textr *txtr)

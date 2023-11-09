@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 16:30:44 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/09 15:56:55 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/09 18:57:35 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ void my_mlx_pixel_put(t_data *data, int x, int y, int color)
     char *dst;
     int rect_x;
     int rect_y;
-    int y1 = (900 / data->all->y_of_map) *0.2;
-    int x1 = (1300 / data->all->x_of_map) *0.2;
+    int y1 = (900 / data->all->y_of_map) ;
+    int x1 = (1300 / data->all->x_of_map);
     rect_x = x * x1;
     rect_y = y * y1;
     int i = rect_x;
@@ -217,8 +217,6 @@ void init_data_txt(t_data *data)
 }
 void initail_image(t_data *data)
 {
-    char *tmp;
-    char *tmp1;
     int i = 0;
    init_data_txt(data);
     while(i < 4)
@@ -227,7 +225,7 @@ void initail_image(t_data *data)
     if(data->imgs[i]->img_ptr == NULL)
         {
             printf("file not exist\n");
-            mlx_destroy_window(data->mlx_ptr, data->mlx_win);
+            // mlx_destroy_window(data->mlx_ptr, data->mlx_win);
             exit(4);
         }
     if(!data->imgs[i]->img_ptr)
@@ -285,10 +283,10 @@ void draw_img(t_data *data)
         } else
             m = (900 / 2) + (data->wall_height / 2);
          while (data->y_wind < m) {
-            if (data->check == 1) {
-                data->x_img = ((data->wall_hit_y / (900 / 7) ) - floor(data->wall_hit_y / (900 / 7))) * data->imgs[data->Nimg]->width;
-            } else if (data->check == 0)
-                data->x_img = ((data->wall_hit_x / (1300 / 17)) - floor(data->wall_hit_x / (1300 / 17))) * data->imgs[data->Nimg]->width;
+            if (data->check == 1)
+                data->x_img = ((data->wall_hit_y / (900 / data->all->y_of_map) ) - floor(data->wall_hit_y / (900 / data->all->y_of_map))) * data->imgs[data->Nimg]->width;
+             else if (data->check == 0)
+                data->x_img = ((data->wall_hit_x / (1300 / data->all->x_of_map)) - floor(data->wall_hit_x / (1300 / data->all->x_of_map))) * data->imgs[data->Nimg]->width;
             data->dst = data->addr + (data->y_wind * data->line_length + data->i * (data->bits_per_pixel / 8));
             if (data->y_img >= data->imgs[data->Nimg]->height)
                 data->y_img = data->imgs[data->Nimg]->height - 1;
@@ -331,9 +329,9 @@ void floor_sky(t_data *data)
         char *dst;
         dst = data->addr + (x * (data->bits_per_pixel / 8));
         if(x < 450 * 1300)
-            *(unsigned int *)dst = 0xFF00FF;
+            *(unsigned int *)dst = sky;
         else
-            *(unsigned int *)dst = 0xFF0F00;
+            *(unsigned int *)dst = gorund;
             x++;
     }
 }
@@ -345,26 +343,24 @@ void draw_3D(t_data *data)
     int y = 0;
     data->fov = 60 * (M_PI / 180);
     data->ray_angle = data->direction - (data->fov / 2);
-    data->all_rays = malloc(sizeof(double) * 1300);
-    ft_lst_add_back(&data->garbage, ft_lst_new(data->all_rays));
     floor_sky(data);
-    initail_image(data);
+
     wall(data);
-    int color;
-   while(y < data->all->y_of_map)
-   {
-       x = 0;
-       while(x < data->all->longest_line)
-       {
-           color = (data->all->map[y][x] == '1') ? 0x000000 : 0xFFFFFF;
-           my_mlx_pixel_put(data, x, y, color);
-           x++;
-       }
-       y++;
-   }
-    color = 0x000000;
-    dst = data->addr + ((int)(data->pos_y * 0.2) * data->line_length + ((int)(data->pos_x * 0.2) * (data->bits_per_pixel / 8)));
-             *(unsigned int *)dst = color;
+//     int color;
+//    while(y < data->all->y_of_map)
+//    {
+//        x = 0;
+//        while(x < data->all->longest_line)
+//        {
+//            color = (data->all->map[y][x] == '1') ? 0x000000 : 0xFFFFFF;
+//            my_mlx_pixel_put(data, x, y, color);
+//            x++;
+//        }
+//        y++;
+//    }
+//     color = 0x000000;
+//     dst = data->addr + ((int)(data->pos_y) * data->line_length + ((int)(data->pos_x) * (data->bits_per_pixel / 8)));
+//              *(unsigned int *)dst = color;
    //  renderMiniMap(data);
     mlx_put_image_to_window(data->mlx_ptr, data->mlx_win, data->img, 0, 0);
 }
@@ -520,13 +516,13 @@ void show_map(t_all *all, t_textr *txt)
     data->mytable = malloc(sizeof(double) * (1300 * 2));
     data->garbage = all->garb;
     ft_lst_add_back(&data->garbage, ft_lst_new(data->mytable));
-    data->checke = malloc(sizeof(int) * 1300);
     data->all = all;
     data->txt = txt;
     all->x_of_map = all->longest_line;
     find_player_position(all, data);
     keys_init(data);
     data->mlx_ptr = mlx_init();
+    initail_image(data);
     data->mlx_win = mlx_new_window(data->mlx_ptr, 1300,  900, "CUB3D");
     data->img = mlx_new_image(data->mlx_ptr, 1300, 900);
 	data->addr = mlx_get_data_addr(data->img, &data->bits_per_pixel, &data->line_length,
