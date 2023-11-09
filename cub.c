@@ -48,18 +48,32 @@ int check_final(t_textr *txtr)
         return (-1);
     return(0);
 }
-int helper(unsigned int *arr, char *str)
+void collect(t_garbage **garb, char **str)
+{
+    int i;
+    i = 0;
+    while(str[i])
+    {
+        ft_lst_add_back(garb, ft_lst_new(str[i]));
+        i++;
+    }
+    ft_lst_add_back(garb, ft_lst_new(str));
+}
+int helper(unsigned int *arr, char *str, t_garbage **garb)
 {
     char **spl;
     int i;
 
     i = 0;
     spl = ft_split(str, ',');
+    collect(garb, spl);
     while(spl[i])
     {
         arr[i] = ft_atoi(spl[i]);
         if(arr[i] > 255)
+        {   i = 0;
             return (-1);
+        }
         i++;
     }
     return 0;

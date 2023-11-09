@@ -60,18 +60,32 @@ int check_final(t_textr *txtr)
         return (-1);
     return(0);
 }
-int helper(unsigned int *arr, char *str)
+void collect(t_garbage **garb, char **str)
+{
+    int i;
+    i = 0;
+    while(str[i])
+    {
+        ft_lst_add_back(garb, ft_lst_new(str[i]));
+        i++;
+    }
+    ft_lst_add_back(garb, ft_lst_new(str));
+}
+int helper(unsigned int *arr, char *str, t_garbage **garb)
 {
     char **spl;
     int i;
 
     i = 0;
     spl = ft_split(str, ',');
+    collect(garb, spl);
     while(spl[i])
     {
         arr[i] = ft_atoi(spl[i]);
         if(arr[i] > 255)
+        {   i = 0;
             return (-1);
+        }
         i++;
     }
     return 0;
@@ -102,29 +116,23 @@ int main(int argc, char *argv[])
 {
     t_all *all;
     t_textr *txtr;
+    t_garbage *garb;
+
+    garb = malloc(sizeof(t_garbage));
+    garb->next = NULL;
     int len;
     len = 0;
-    
    if(argc > 1)
    {
-   if (check_extionts(argv[1]) == -1 || all_in_one(&all, &txtr, argv) == -1)
+   if (check_extionts(argv[1]) == -1 || all_in_one(&all, &txtr, argv, &garb) == -1)
    {
         printf("ERROR\n");
         return(0);
    }
-    len = updatemap(all);
-    count_x_y_of_the_map(&all);
-    fix_map(&all, len);
-    if((check_if_close(all->map)) == -1)
-    {
-        printf("ERROR1\n");
-        return -1;
-    }
-    if(check_for_valid_map(all->map) == -1)
-    {
-        printf("ERROR2\n");
-        return(-1);
-    }
+   len = updatemap(all);
+   all->garb = garb;
+   count_x_y_of_the_map(&all);
+   fix_map(&all, len);
     if(check_final(txtr) == -1)
     {
        printf("ERROR3\n");
