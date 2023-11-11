@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 16:30:44 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/09 18:57:35 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/11 15:18:24 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,13 @@
 // 1111011111111111111
 // 1000000000000000001
 // 1111111111111111111
-void my_mlx_pixel_put(t_data *data, int x, int y, int color)
+void my_mlx_pixel_put(t_data *data, int x, int y, t_all_txt img)
 {
     char *dst;
     int rect_x;
     int rect_y;
-    int y1 = (900 / data->all->y_of_map) ;
-    int x1 = (1300 / data->all->x_of_map);
+    int y1 = MINI_TILE;
+    int x1 = MINI_TILE;
     rect_x = x * x1;
     rect_y = y * y1;
     int i = rect_x;
@@ -39,8 +39,8 @@ void my_mlx_pixel_put(t_data *data, int x, int y, int color)
         i = rect_x;
         while(i < rect_x + x1)
         {
-            dst = data->addr + (j * data->line_length + i * (data->bits_per_pixel / 8));
-            *(unsigned int *)dst = color;
+            dst = img.img_data + (j * img.len + i * (img.bits / 8));
+            *(unsigned int *)dst = data->color;
             i++;
         }
         j++;
@@ -52,16 +52,16 @@ void draw_line(t_data *data, double x_intercept, double y_intercept)
 
     // Assuming that mlx_ptr and win_ptr are properly initialized
     char *dst;
-    double dx = x_intercept - (data->pos_x *0.2);
-    double dy = y_intercept - (data->pos_y*0.2 );
+    double dx = x_intercept - (data->pos_x );
+    double dy = y_intercept - (data->pos_y);
     double steps = (fabs(dx) > fabs(dy)) ? fabs(dx) : fabs(dy);
     double xIncrement = dx / steps;
     double yIncrement = dy / steps;
-    double x = data->pos_x *0.2;
-    double y = data->pos_y*0.2 ;
+    double x = data->pos_x ;
+    double y = data->pos_y ;
 
     for (int i = 0; i < steps; i++) {
-        if(x < 0 || y < 0 || x >= 1300 || y >= 900)
+        if(x < 0 || y < 0 || x >= 1300 || y >= HEIGHT_WIN)
             break;
          dst = data->addr + ((int)(y)  * data->line_length + ((int)x) * (data->bits_per_pixel / 8));
              *(unsigned int *)dst = 0x0000FF;
@@ -84,10 +84,10 @@ int getFacingDirection(double direction) {
 }
 void intercept_v(t_data *data)
 {
-    while (data->y_intercept >= 0 && data->y_intercept < 900 && data->x_intercept >= 0 && data->x_intercept < 1300) {
-    int x = data->x_intercept / (1300 / data->all->x_of_map);
-    int y = data->y_intercept / (900 / data->all->y_of_map);
-    if (y < data->all->y_of_map && x < data->all->x_of_map && data->all->map[y][x] == '1') {
+    while (data->y_intercept >= 0 && data->y_intercept < HEIGHT_WIN && data->x_intercept >= 0 && data->x_intercept < WIDTH_WIN) {
+    double x = data->x_intercept / TILE;
+    double y = data->y_intercept / TILE;
+    if (y < data->all->y_of_map && x < data->all->x_of_map && data->all->map[(int)y][(int)x] == '1') {
         data->found_wallv = 1;
         break;
     }
@@ -120,6 +120,11 @@ void distance(t_data *data, double direction)
         data->wall_hit_y = data->y_ver;
         data->distance = distancev;
         }
+    if(data->Nimg == 3)
+    {
+        // printf("found_wallh = %f v %f=\n", data->found_wallh, data->found_wallv);
+        // printf("distance = %f\n", data->distance);
+    }
     data->distance *= cos(data->direction - direction);
 }
 void  vert_cord(t_data *data, double direction)
@@ -127,16 +132,16 @@ void  vert_cord(t_data *data, double direction)
     double ray_angle;
     data->found_wallv = 0;
     ray_angle = direction;
-    data->x_intercept = floor(data->pos_x / (1300 / data->all->x_of_map)) * (1300 / data->all->x_of_map);
+    data->x_intercept = floor(data->pos_x / TILE) * TILE;
     if (getFacingDirection(ray_angle) == 1)
-        data->x_intercept += (1300 / data->all->x_of_map);
+        data->x_intercept += TILE;
     else 
         data->x_intercept -= 0.00000001;
     data->y_intercept = data->pos_y + (data->x_intercept - data->pos_x) * tan(ray_angle);
-    data->x_step = (1300 / data->all->x_of_map);
+    data->x_step = TILE;
     if (getFacingDirection(ray_angle) == 2)
         data->x_step *= -1;
-    data->y_step = (1300 / data->all->x_of_map) * tan(ray_angle);
+    data->y_step = TILE * tan(ray_angle);
     if (getupdown(ray_angle) == 2 && data->y_step > 0) 
         data->y_step *= -1;
     else if (getupdown(ray_angle) == 1 && data->y_step < 0) 
@@ -148,10 +153,10 @@ void  vert_cord(t_data *data, double direction)
 }
 void intercept_h(t_data *data)
 {
-    while (data->y_intercept >= 0 && data->y_intercept < 900 && data->x_intercept >= 0 && data->x_intercept < 1300)
+    while (data->y_intercept >= 0 && data->y_intercept < HEIGHT_WIN && data->x_intercept >= 0 && data->x_intercept < WIDTH_WIN)
     {
-        int x = data->x_intercept / (1300 / data->all->x_of_map);
-        int y = data->y_intercept / (900 / data->all->y_of_map);
+        int x = data->x_intercept / TILE;
+        int y = data->y_intercept / TILE;
         if ((y < data->all->y_of_map && x < data->all->x_of_map && data->all->map[y][x] == '1'))
         {
             data->found_wallh = 1;
@@ -174,16 +179,16 @@ void draw_ray(t_data *data, double direction)
     data->found_wallh = 0;
     char *dst;
     ray_angle = direction;
-    data->y_intercept = floor(data->pos_y / (900 / data->all->y_of_map)) * (900 / data->all->y_of_map);
+    data->y_intercept = floor(data->pos_y / TILE) * TILE;
     if(getupdown(ray_angle) == 1)
-        data->y_intercept += (900 / data->all->y_of_map);
+        data->y_intercept += TILE;
     if(getupdown(ray_angle) == 2)
         data->y_intercept -= 0.000001;
     data->x_intercept = data->pos_x + (data->y_intercept - data->pos_y) / tan(ray_angle);
-    data->y_step = (900/ data->all->y_of_map);
+    data->y_step = TILE;
     if(getupdown((ray_angle)) == 2)
         data->y_step *= -1;
-    data->x_step = (900 / data->all->y_of_map)/ tan(ray_angle);
+    data->x_step = TILE / tan(ray_angle);
     if(getFacingDirection(ray_angle) == 2 && data->x_step > 0)
         data->x_step *= -1;
     else if(getFacingDirection(ray_angle) == 1 && data->x_step < 0)
@@ -218,46 +223,99 @@ void init_data_txt(t_data *data)
 void initail_image(t_data *data)
 {
     int i = 0;
-   init_data_txt(data);
+    init_data_txt(data);
     while(i < 4)
     {
     data->imgs[i]->img_ptr = mlx_xpm_file_to_image(data->mlx_ptr, data->imgs[i]->path, &data->imgs[i]->width, &data->imgs[i]->height);
-    if(data->imgs[i]->img_ptr == NULL)
-        {
-            printf("file not exist\n");
-            // mlx_destroy_window(data->mlx_ptr, data->mlx_win);
-            exit(4);
-        }
     if(!data->imgs[i]->img_ptr)
     {
-       mlx_destroy_window(data->mlx_ptr, data->mlx_win);
+        printf("file not exist\n");
          exit(0);
     }
     data->imgs[i]->img_data = mlx_get_data_addr(data->imgs[i]->img_ptr, &data->imgs[i]->bits, &data->imgs[i]->len, &data->imgs[i]->end);
         i++;
     }
 }
-
-void renderMiniMap(t_data *data)
+int get_color_at_coord(t_data *data, int x, int y) {
+    char *dst;
+    dst = data->mini.img_data + (y * data->mini.len + x * (data->mini.bits / 8));
+    int color = *(unsigned int *)dst;
+    return color;
+}
+void draw_square_player(t_data *data)
 {
+    int i = 0;
+    int j = 0;
+    int x = data->pos_x / TILE * MINI_TILE;
+    int y = data->pos_y / TILE * MINI_TILE;
+    while(i < 3)
+    {
+        j = 0;
+        while(j < 3)
+        {
+            char *dst;
+            if(x + j < data->all->x_of_map * MINI_TILE && y + i < data->all->y_of_map * MINI_TILE)
+            {
+            dst = data->mini.img_data + ((y + i) * data->mini.len + (x + j) * (data->mini.bits / 8));
+            *(unsigned int *)dst = 0xFF0F00;
+            }
+            j++;
+        }
+        i++;
+    }
+}
+void draw_around_player(t_data *data) {
+    int i = 0;
+    int j = 0;
+    char *dst;
+    unsigned int color;
+    char *pixel;
+    int x = ((data->pos_x / TILE) * MINI_TILE) - 100;
+    if(x < 0)
+        x = 0;
+    int y = ((data->pos_y / TILE) * MINI_TILE) - 100;
+    if(y < 0)
+        y = 0;
+    data->big.img_ptr = mlx_new_image(data->mlx_ptr, 400, 200);
+    data->big.img_data = mlx_get_data_addr(data->big.img_ptr, &data->big.bits, &data->big.len, &data->big.end);
+    while (i < 200 && y + i < data->all->y_of_map * MINI_TILE) {
+        j = 0;
+        while (j < 400 && x + j < data->all->x_of_map * MINI_TILE) {
+            color = get_color_at_coord(data, x  + j , i + y);
+            dst = data->big.img_data + (i * data->big.len + j * (data->big.bits / 8));
+            *(unsigned int *)dst = color;
+            j++;
+        }
+        i++;
+    }
+    mlx_put_image_to_window(data->mlx_ptr, data->mlx_win, data->big.img_ptr, 50, 50);
+}
+
+void renderMiniMap(t_data *data) {
     int x = 0;
     int y = 0;
-    int y1 = (900 / data->all->y_of_map);
-    int x1 = (1300 / data->all->x_of_map);
-    int color;
-    while(y < data->all->y_of_map)
-    {
+    char *dst;
+    int width = data->all->x_of_map * MINI_TILE;
+    int height = data->all->y_of_map * MINI_TILE;
+    data->mini.img_ptr = mlx_new_image(data->mlx_ptr, width, height);
+    data->mini.img_data = mlx_get_data_addr(data->mini.img_ptr, &data->mini.bits, &data->mini.len, &data->mini.end);
+    while (y < data->all->y_of_map) {
         x = 0;
-        while(x < data->all->x_of_map)
-        {
-            color = (data->all->map[y][x] == '1') ? 0x000000 : 0xFFFFFF;
-            my_mlx_pixel_put(data, x * x1, y * y1, color);
+        while (x < data->all->x_of_map) {
+            if (data->all->map[y][x] == '1') {
+                data->color = 0x000000;
+                my_mlx_pixel_put(data, x, y, data->mini);
+            }
+            else {
+                data->color = 0xFFFFFF;
+                my_mlx_pixel_put(data, x, y, data->mini);
+            }
             x++;
         }
         y++;
     }
-    color = 0x000000;
-    my_mlx_pixel_put(data, (int)(data->pos_x * 0.2), (int)(data->pos_y * 0.2), color);
+    draw_square_player(data);
+    draw_around_player(data);
 }
 
 int get_ntxtr(t_data *data)
@@ -277,16 +335,16 @@ int get_ntxtr(t_data *data)
 void draw_img(t_data *data)
 {
     int m;
-     if (data->wall_height > 900) {
-            m = 900;
-            data->y_img = (data->wall_height - 900) / 2 / data->wall_height * data->imgs[data->Nimg]->height;
+     if (data->wall_height > HEIGHT_WIN) {
+            m = HEIGHT_WIN;
+            data->y_img = (data->wall_height - HEIGHT_WIN) / 2 / data->wall_height * data->imgs[data->Nimg]->height;
         } else
-            m = (900 / 2) + (data->wall_height / 2);
+            m = (HEIGHT_WIN / 2) + (data->wall_height / 2);
          while (data->y_wind < m) {
             if (data->check == 1)
-                data->x_img = ((data->wall_hit_y / (900 / data->all->y_of_map) ) - floor(data->wall_hit_y / (900 / data->all->y_of_map))) * data->imgs[data->Nimg]->width;
+                data->x_img = ((data->wall_hit_y / TILE ) - floor(data->wall_hit_y / TILE)) * data->imgs[data->Nimg]->width;
              else if (data->check == 0)
-                data->x_img = ((data->wall_hit_x / (1300 / data->all->x_of_map)) - floor(data->wall_hit_x / (1300 / data->all->x_of_map))) * data->imgs[data->Nimg]->width;
+                data->x_img = ((data->wall_hit_x / TILE) - floor(data->wall_hit_x / TILE)) * data->imgs[data->Nimg]->width;
             data->dst = data->addr + (data->y_wind * data->line_length + data->i * (data->bits_per_pixel / 8));
             if (data->y_img >= data->imgs[data->Nimg]->height)
                 data->y_img = data->imgs[data->Nimg]->height - 1;
@@ -300,16 +358,24 @@ void draw_img(t_data *data)
 void wall(t_data *data)
 {
     data->i = 0;
-    while(data->i < 1300)
+    while(data->i < WIDTH_WIN)
     {
     if(data->ray_angle > 2 * M_PI)
         data->ray_angle = data->ray_angle - 2 * M_PI;
     draw_ray(data, data->ray_angle);
     data->Nimg = get_ntxtr(data);
-    data->ray_angle += data->fov / 1300;
-    data->dist_proj_plane = (900 / 2) / tan(data->fov / 2);
-    data->wall_height = ((900 / 10) / data->distance) * data->dist_proj_plane;
-    data->y_wind = (900 / 2) - (data->wall_height / 2);
+    data->ray_angle += data->fov / WIDTH_WIN;
+    data->dist_proj_plane = (HEIGHT_WIN / 2) / tan(data->fov / 2);
+    data->wall_height = ((HEIGHT_WIN / 10) / data->distance) * data->dist_proj_plane;
+    data->y_wind = (HEIGHT_WIN / 2) - (data->wall_height / 2);
+    // if((int)data->wall_height <= 0)
+    //     data->wall_height = HEIGHT_WIN;
+    if(data->Nimg == 3)
+    {
+        // printf("distance = %f\n", data->distance);
+        // printf("dist_proj_plane = %f\n", data->dist_proj_plane);
+        // printf("wall = %f\n", data->wall_height);
+    }
     if (data->y_wind < 0)
          data->y_wind = 0;
     data->y_img = 0;
@@ -324,11 +390,11 @@ void floor_sky(t_data *data)
     unsigned int gorund;
     sky = data->all->txt->F_CLOR;
     gorund = data->all->txt->C_CLOR;
-    while (x < 1300 * 900)
+    while (x < WIDTH_WIN * HEIGHT_WIN)
     {
         char *dst;
         dst = data->addr + (x * (data->bits_per_pixel / 8));
-        if(x < 450 * 1300)
+        if(x < (HEIGHT_WIN / 2) * WIDTH_WIN)
             *(unsigned int *)dst = sky;
         else
             *(unsigned int *)dst = gorund;
@@ -344,38 +410,54 @@ void draw_3D(t_data *data)
     data->fov = 60 * (M_PI / 180);
     data->ray_angle = data->direction - (data->fov / 2);
     floor_sky(data);
-
     wall(data);
-//     int color;
+    int color;
+//    data->mini.img_ptr = mlx_new_image(data->mlx_ptr, WIDTH_WIN, HEIGHT_WIN);
+//    data->mini.img_data = mlx_get_data_addr(data->mini.img_ptr, &data->mini.bits, &data->mini.len, &data->mini.end);
 //    while(y < data->all->y_of_map)
 //    {
 //        x = 0;
-//        while(x < data->all->longest_line)
+//        while(x < data->all->x_of_map)
 //        {
-//            color = (data->all->map[y][x] == '1') ? 0x000000 : 0xFFFFFF;
-//            my_mlx_pixel_put(data, x, y, color);
+//            data->color = (data->all->map[y][x] == '1') ? 0xF00FF0 : 0xFFFFFF;
+//            my_mlx_pixel_put(data, x, y, data->mini);
 //            x++;
 //        }
 //        y++;
 //    }
-//     color = 0x000000;
-//     dst = data->addr + ((int)(data->pos_y) * data->line_length + ((int)(data->pos_x) * (data->bits_per_pixel / 8)));
+//     color = 0xFF00F0;
+//     dst = data->mini.img_data + ((int)(data->pos_y) * data->mini.len + ((int)(data->pos_x) * (data->mini.bits / 8)));
 //              *(unsigned int *)dst = color;
-   //  renderMiniMap(data);
+//     mlx_put_image_to_window(data->mlx_ptr, data->mlx_win, data->mini.img_ptr, 0, 0);
     mlx_put_image_to_window(data->mlx_ptr, data->mlx_win, data->img, 0, 0);
+    
+    renderMiniMap(data);
 }
 
 int player_collision(t_data *data)
 {
     int x = data->pos_x;
     int y = data->pos_y;
-    int y1 = (900 / data->all->y_of_map);
-    int x1 = (1300 / data->all->x_of_map);
+    int y1 = TILE;
+    int x1 = TILE;
     // printf("first %c\n", data->all->map[y / y1][x / x1]);
     // printf("twoo %c\n", data->all->map[(y + 10) / y1][(x + 10) / x1]);
     // printf("three %c\n", data->all->map[(y + 10) / y1][x / x1]);
     // printf("four %c\n", data->all->map[y / y1][(x + 10) / x1]);
-    if(data->all->map[y / y1][x / x1] == '1')
+    // printf("y = %d x = %d\n", y +  1 / y1 , x / x1);
+    // if(data->all->map[(y + 3) / y1][x / TILE] == '1')
+    //         return(1);
+    // if(x + 1 / TILE < WIDTH_WIN && data->all->map[y / TILE][(x + 1) / TILE] == '1')
+    //         return(1);
+    // if(data->all->map[(y + 3) / y1][(x + 3) / x1] == '1')
+    //         return(1);
+    // if(data->all->map[(y - 3) / y1][(x - 3) / x1] == '1')
+    //         return(1);
+    // if(data->all->map[(y - 3) / y1][x / x1] == '1')
+    //         return(1);
+    // if(data->all->map[y / y1][(x - 3) / x1] == '1')
+    //         return(1);
+    if(data->all->map[y / y1][x / TILE] == '1')
         return(1);
     // else if(data->all->map[(y + 1) / y1][(x + 1) / x1] == '1')
     //     return(1);
@@ -459,8 +541,8 @@ void find_player_position(t_all *all, t_data *data) {
         x = 0;
         while (x < all->longest_line) {
             if (all->map[y][x] == 'N' || all->map[y][x] == 'S' || all->map[y][x] == 'W' || all->map[y][x] == 'E') {
-                data->pos_x = x * (1300 / all->x_of_map);
-                data->pos_y = y * (900 / all->y_of_map);
+                data->pos_x = x * TILE + TILE / 2;
+                data->pos_y = y * TILE + TILE / 2;
                 if (all->map[y][x] == 'N') {
                     data->direction = 3 * M_PI / 2;
                 } else if (all->map[y][x] == 'S') {
@@ -468,7 +550,7 @@ void find_player_position(t_all *all, t_data *data) {
                 } else if (all->map[y][x] == 'W') {
                     data->direction = M_PI;  
                 } else if (all->map[y][x] == 'E') {
-                    data->direction = 0;  
+                    data->direction = 0;
                 }
                 return;
             }
@@ -480,6 +562,8 @@ void find_player_position(t_all *all, t_data *data) {
 
 int release_key(int key, t_data *data)
 {
+    if(key == KEY_ESC)
+        exit(0);
     if(key == KEY_A)
         data->key_a = 0;
     if(key == KEY_D)
@@ -509,22 +593,43 @@ int close_window(t_data *data)
     mlx_destroy_window(data->mlx_ptr, data->mlx_win);
     exit(0);
 }
+
+void print_array(char **map)
+{
+    int i = 0;
+    int x = 0;
+    while(map[i])
+    {
+        x = 0;
+        printf("{");
+        while(map[i][x])
+        {
+            printf("%c", map[i][x]);
+            x++;
+        }
+        printf("}");
+        printf("\n");
+        i++;
+    }
+}
+
 void show_map(t_all *all, t_textr *txt)
 {
     t_data *data;
     data = malloc(sizeof(t_data));
-    data->mytable = malloc(sizeof(double) * (1300 * 2));
+    data->mytable = malloc(sizeof(double) * (WIDTH_WIN * 2));
     data->garbage = all->garb;
     ft_lst_add_back(&data->garbage, ft_lst_new(data->mytable));
     data->all = all;
     data->txt = txt;
     all->x_of_map = all->longest_line;
     find_player_position(all, data);
+    print_array(all->map);
     keys_init(data);
     data->mlx_ptr = mlx_init();
     initail_image(data);
-    data->mlx_win = mlx_new_window(data->mlx_ptr, 1300,  900, "CUB3D");
-    data->img = mlx_new_image(data->mlx_ptr, 1300, 900);
+    data->mlx_win = mlx_new_window(data->mlx_ptr, WIDTH_WIN,  HEIGHT_WIN, "CUB3D");
+    data->img = mlx_new_image(data->mlx_ptr, WIDTH_WIN, HEIGHT_WIN);
 	data->addr = mlx_get_data_addr(data->img, &data->bits_per_pixel, &data->line_length,
 								&data->endian);
     mlx_hook(data->mlx_win, 17, 0L, close_window, data);
@@ -538,3 +643,4 @@ void show_map(t_all *all, t_textr *txt)
 // 2, optimise the width and height of map
 // convert to square 
 // optimise the window size
+// in check if texture is null 225 line dont add mlx destroy becausw it will sgv in it 

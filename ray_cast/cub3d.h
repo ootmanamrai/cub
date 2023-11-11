@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 13:09:47 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/09 16:32:37 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/11 15:16:16 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,10 @@
 #include <stdio.h>
 #include <limits.h>
 #include "../file.h"
-#define TILE_W (1300 / 33)
-#define TILE_Y (900 / 11)
+#define TILE 65
+#define MINI_TILE 20
+#define WIDTH_WIN 1300
+#define HEIGHT_WIN 900
 #if defined(__linux__)
     #define KEY_ESC 65307
     #define KEY_UP 5
@@ -73,6 +75,9 @@ typedef struct s_txt_data
 }   t_all_txt;
 typedef struct	s_data {
     t_all_txt *imgs[5];
+    t_all_txt mini;
+    t_all_txt big;
+    int color;
 	double 	direction;
     char *dst;
     int old_x;
