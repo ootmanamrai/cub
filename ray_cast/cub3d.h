@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 13:09:47 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/11 15:16:16 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/13 21:30:16 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@
 #include <stdio.h>
 #include <limits.h>
 #include "../file.h"
-#define TILE 65
+#define TILE 64
 #define MINI_TILE 20
-#define WIDTH_WIN 1300
-#define HEIGHT_WIN 900
+#define WIDTH_WIN 1000
+#define HEIGHT_WIN 1000
 #if defined(__linux__)
     #define KEY_ESC 65307
     #define KEY_UP 5
@@ -34,8 +34,6 @@
     #define KEY_S 115
     #define KEY_D 100
     #define SHIFT 1
-    #define WIDTH 1920
-    #define HEIGHT 1080
     #define E 3
     #define W 2
     #define N 0
@@ -52,10 +50,8 @@
     #define KEY_D 2
     #define SPEED 5
     #define SIDES_SPEED 10
-    #define ROTATION_ANGLE 0.1
+    #define ROTATION_ANGLE 0.05
     #define SHIFT 0
-    #define WIDTH 2560
-    #define HEIGHT 1440
     #define E 3
     #define W 2
     #define N 0
@@ -78,6 +74,9 @@ typedef struct	s_data {
     t_all_txt mini;
     t_all_txt big;
     int color;
+    int mouse_left;
+    int mouse_right;
+    int hi;
 	double 	direction;
     char *dst;
     int old_x;
