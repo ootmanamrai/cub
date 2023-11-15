@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 16:30:44 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/14 19:54:57 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/15 14:31:32 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -428,13 +428,7 @@ void	renderMiniMap(t_data *data)
 
 int	get_ntxtr(t_data *data)
 {
-	int x;
-	int y;
-
-	x = data->wall_hit_x / TILE;
-	y = data->wall_hit_y / TILE;
-	if(data->all->map[y][x] == 'D')
-		return(4);
+	
 	if (data->check == 1)
 	{
 		if (getFacingDirection(data->ray_angle) == 1)
