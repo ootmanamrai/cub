@@ -6,12 +6,21 @@
 #include "libft/libft.h"
 #include "get_line/get_next_line.h"
 #include <mlx.h>
+typedef struct  s_door
+{
+    int x;
+    int y;
+    int status;
+    struct s_door *next;
+}t_door;
+
 typedef struct s_garbage
 {
     void *ptr;
     struct s_garbage *next;
 }               t_garbage;
 t_garbage *ft_lst_new(void *ptr);
+
 void ft_lst_add_back(t_garbage **head, t_garbage *new);
 typedef struct s_textr
 {
@@ -19,19 +28,27 @@ typedef struct s_textr
     char **SO;
     char **WE;
     char **EA;
+    char **DO;//bonus part
+    char **AN1;//bonus part
+    char **AN2;//bonus part
+    char **AN3;//bonus part
+    char **AN4;//bonus part
     char **S;
     char **color_f;
     char **color_c;
-    unsigned int *F;
-    unsigned int *C;
-    unsigned int C_CLOR;
-    unsigned int F_CLOR;
+    long long *F;
+    long long *C;
+    long long C_CLOR;
+    long long F_CLOR;
     t_garbage *garb;
 } t_textr;
 
 typedef struct s_all
 {
     char **map;
+    char *line;
+    int num_ptr;
+    int lon;
     void *img;
     char *addrs;
     void *mlx;
@@ -46,6 +63,7 @@ typedef struct s_all
     int x_of_map;
     int y_of_map;
     int longest_line;
+    t_door *door;
     t_textr *txt;
     t_garbage *garb;
 } t_all;
@@ -63,7 +81,7 @@ int check_extionts(char *argv);
 int count_pinter(char **ptr);
 int count(char **str);
 int check_final(t_textr *txtr);
-int helper(unsigned int *arr, char *str, t_garbage **garb);
+int helper(long long *arr, char *str, t_garbage **garb);
 int ft_atoi_num(t_textr *txt);
 unsigned int RGBtoUint8(int R, int G, int B);
 void get_colers(t_textr *txtr);
@@ -73,4 +91,5 @@ void init_txters(t_textr **txtr, t_all *all);
 int check_errors(char **map);
 void get_x_y_of_the_player(t_all **all);
 void  get_longest_line(t_all *all);
+int check_for_doors(t_all *all);
 #endif

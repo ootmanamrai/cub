@@ -8,6 +8,9 @@ void init_all(t_all **all)
     (*all)->player_angel = 0;
     (*all)->map = NULL;
     (*all)->longest_line = 0;
+    (*all)->num_ptr = 0;
+    (*all)->line = NULL;
+    (*all)->lon = 0;
 }
 
 void count_x_y_of_the_map(t_all **all)
@@ -52,7 +55,7 @@ int check_if_close(char **map)
    if(i == 0 && (ft_strnstr(map[i], "0", strlen(map[i]) - 1) ||  ft_strnstr(map[i], "N", strlen(map[i]) - 1) ||\
    ft_strnstr(map[i], "S", strlen(map[i]) - 1) || ft_strnstr(map[i], "E", strlen(map[i]) - 1) || ft_strnstr(map[i], "W", strlen(map[i]) - 1)))
    {
-    printf("not close - \n");
+    printf("not close\nERRROR");
     return -1;
     }
   while (map[i])
@@ -63,13 +66,13 @@ int check_if_close(char **map)
     {
        if(map[i][0] == 'N' || map[i][0] == 'E' || map[i][0] == 'S' || map[i][0] == 'W' || map[i][0] == '0')
        {
-            printf("not closex\n");
+            printf("not close\nERRROR");
             return(-1);
        }
        if(map[i][ft_strlen(map[i]) - 1] == 'N' || map[i][ft_strlen(map[i]) - 1] == 'E' ||\
        map[i][ft_strlen(map[i]) - 1] == 'S' || map[i][ft_strlen(map[i]) - 1] == 'W' || map[i][ft_strlen(map[i]) - 1] == '0')
        {
-            printf("not closex\n");
+            printf("not close\nERRROR");
             return(-1);
        }
         x++;
@@ -80,7 +83,7 @@ int check_if_close(char **map)
   if((ft_strnstr(map[i], "0", strlen(map[i])) ||  ft_strnstr(map[i], "N", strlen(map[i])) ||\
    ft_strnstr(map[i], "S", strlen(map[i])) || ft_strnstr(map[i], "E", strlen(map[i])) || ft_strnstr(map[i], "W", strlen(map[i]))))
    {
-    printf("not close \n");
+    printf("not close\nERRROR");
     return -1;
     }
   return (0);
@@ -99,7 +102,7 @@ int check_extionts(char *argv)
         if(argv[i] == '.')
             if(strcmp((argv + i + 1), "cub"))
             {
-                printf("unvalid exti");
+                printf("unvalid file extiontsion\nERRROR");
                 return -1;
             }
             i++;

@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 16:30:44 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/15 14:31:32 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/16 23:55:56 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,28 +99,21 @@ int	getFacingDirection(double direction)
 		return (1);
 	return (2);
 }
+
 void	intercept_v(t_data *data)
 {
 	int	x;
 	int	y;
 
-	// if(data->x_intercept > WIDTH_WIN)
-	//     data->x_intercept = data->all->x_of_map * TILE - 1;
-	// if(data->y_intercept > HEIGHT_WIN)
-	//     data->y_intercept = HEIGHT_WIN - 1;
-	// printf("y_inter = %f x_inter = %f\n", data->y_intercept,
-		// data->x_intercept);
-	// printf("x_sterv = %f Yint2v = %f\n", data->x_intercept,
-		// data->y_intercept);
-	while (data->y_intercept >= 0 && data->y_intercept < TILE * 10
-		&& data->x_intercept >= 0 && data->x_intercept < TILE * 41)
+	while (data->y_intercept >= 0 && data->y_intercept < TILE
+		* data->all->y_of_map && data->x_intercept >= 0
+		&& data->x_intercept < TILE * data->all->x_of_map)
 	{
 		x = data->x_intercept / TILE;
 		y = data->y_intercept / TILE;
 		if (y < data->all->y_of_map && x < data->all->x_of_map
-			&& data->all->map[y][x] == '1')
+			&& (data->all->map[y][x] == '1' || data->all->map[y][x] == 'D'))
 		{
-			//  printf("sdd V %c x = %d y = %d\n", data->all->map[y][x], x, y);
 			data->found_wallv = 1;
 			break ;
 		}
@@ -130,6 +123,7 @@ void	intercept_v(t_data *data)
 	data->x_ver = data->x_intercept;
 	data->y_ver = data->y_intercept;
 }
+
 void	distance(t_data *data, double direction)
 {
 	double	distancev;
@@ -157,10 +151,6 @@ void	distance(t_data *data, double direction)
 		data->wall_hit_y = data->y_ver;
 		data->distance = distancev;
 	}
-	// printf("wall_hit_x = %f wall_hit_y = %f\n", data->wall_hit_x / TILE,
-		// data->wall_hit_y / TILE);
-	if (data->hi == 1)
-		draw_line(data, (data->wall_hit_x), data->wall_hit_y);
 	data->distance *= cos(data->direction - direction);
 }
 
@@ -178,9 +168,6 @@ void	vert_cord(t_data *data, double direction)
 	data->y_intercept = data->pos_y + (data->x_intercept - data->pos_x)
 		* tan(ray_angle);
 	data->x_step = TILE;
-	// printf("x_step = %f Yint = %f\n", data->x_intercept, data->y_intercept);
-	// printf("facinf = %d\n", getFacingDirection(ray_angle));
-	// printf("updown = %d\n", getupdown(ray_angle));
 	if (getFacingDirection(ray_angle) == 2)
 		data->x_step *= -1;
 	data->y_step = TILE * tan(ray_angle);
@@ -193,24 +180,22 @@ void	vert_cord(t_data *data, double direction)
 	intercept_v(data);
 	distance(data, direction);
 }
+
 void	intercept_h(t_data *data)
 {
 	int	x;
 	int	y;
 
-	// printf("y_interH = %f x_interH = %f\n", data->y_intercept,
-		// data->x_intercept);
-	while (data->y_intercept >= 0 && data->y_intercept < TILE * 10
-		&& data->x_intercept >= 0 && data->x_intercept < TILE * 41)
+	while (data->y_intercept >= 0 && data->y_intercept < TILE
+		* data->all->y_of_map && data->x_intercept >= 0
+		&& data->x_intercept < TILE * data->all->x_of_map)
 	{
 		x = data->x_intercept / TILE;
 		y = data->y_intercept / TILE;
-		// printf("sdd  %c x = %d y = %d\n", data->all->map[y][x], x, y);
 		if ((y < data->all->y_of_map && x < data->all->x_of_map
-				&& data->all->map[y][x] == '1'))
+				&& (data->all->map[y][x] == '1' || data->all->map[y][x] == 'D'
+					|| data->all->map[y][x] == 'A')))
 		{
-			//  if(data->hi == 1)
-			// printf("sdd H %c x = %d y = %d\n", data->all->map[y][x], x, y);
 			data->found_wallh = 1;
 			break ;
 		}
@@ -219,14 +204,8 @@ void	intercept_h(t_data *data)
 	}
 	data->x_hor = data->x_intercept;
 	data->y_hor = data->y_intercept;
-	// if(data->hi == 1)
-	//     {
-	//         printf("y = %d x = %d\n", (int)(data->y_hor
-			// / TILE),(int)(data->x_hor / TILE));
-	//             printf("s %c\n", data->all->map[(int)(data->y_hor
-			// / TILE)][(int)(data->x_hor / TILE)]);
-	//     }
 }
+
 void	draw_ray(t_data *data, double direction)
 {
 	double	ray_angle;
@@ -271,16 +250,26 @@ int	get_pixel_color(t_data *data, int x, int y)
 	color = *(unsigned int *)pixel;
 	return (color);
 }
+
 void	init_data_txt(t_data *data)
 {
 	int	i;
+    int x;
+    char *img;
 
+    x = 0;
 	i = 0;
-	while (i < 5)
+    img = "img.xpm";
+	while (i < 21)
 	{
 		data->imgs[i] = malloc(sizeof(t_all_txt));
 		ft_lst_add_back(&data->garbage, ft_lst_new(data->imgs[i]));
-		data->imgs[i]->path = data->txt->S[i];
+        if(i < 5)
+			data->imgs[i]->path = data->txt->S[i];
+         else
+            data->imgs[i]->path = ft_strjoin(ft_itoa(i), img);
+		
+            x = i;
 		i++;
 	}
 	data->imgs[i] = NULL;
@@ -292,11 +281,14 @@ void	initail_image(t_data *data)
 
 	i = 0;
 	init_data_txt(data);
-	while (i < 4)
+	while (i < 21)
 	{
-		data->imgs[i]->img_ptr = mlx_xpm_file_to_image(data->mlx_ptr,
+		
+     
+        data->imgs[i]->img_ptr = mlx_xpm_file_to_image(data->mlx_ptr,
 				data->imgs[i]->path, &data->imgs[i]->width,
 				&data->imgs[i]->height);
+		printf("%s\n", data->imgs[i]->path);
 		if (!data->imgs[i]->img_ptr)
 		{
 			printf("file not exist\n");
@@ -307,6 +299,7 @@ void	initail_image(t_data *data)
 		i++;
 	}
 }
+
 int	get_color_at_coord(t_data *data, int x, int y)
 {
 	char	*dst;
@@ -317,13 +310,14 @@ int	get_color_at_coord(t_data *data, int x, int y)
 	color = *(unsigned int *)dst;
 	return (color);
 }
+
 void	draw_square_player(t_data *data)
 {
-	int	i;
-	int	j;
-	int	x;
-	int	y;
-			char *dst;
+	int		i;
+	int		j;
+	int		x;
+	int		y;
+	char	*dst;
 
 	i = 0;
 	j = 0;
@@ -346,6 +340,7 @@ void	draw_square_player(t_data *data)
 		i++;
 	}
 }
+
 void	draw_around_player(t_data *data)
 {
 	int				i;
@@ -413,6 +408,11 @@ void	renderMiniMap(t_data *data)
 				data->color = 0x0000FF;
 				my_mlx_pixel_put(data, x, y, data->mini);
 			}
+			else if (data->all->map[y][x] == 'D') // for bonus
+			{
+				data->color = 0xA52A2A;
+				my_mlx_pixel_put(data, x, y, data->mini);
+			}
 			else
 			{
 				data->color = 0xFFFFFF;
@@ -425,10 +425,43 @@ void	renderMiniMap(t_data *data)
 	draw_square_player(data);
 	draw_around_player(data);
 }
-
 int	get_ntxtr(t_data *data)
 {
-	
+	int	x;
+	int	y;
+
+	x = data->wall_hit_x / TILE;
+	y = data->wall_hit_y / TILE;
+	if (data->all->map[y][x] == 'D')
+	{
+		return (4);
+	}
+	if (data->all->map[y][x] == 'A')
+	{
+		printf("%c\n", data->all->map[y][x]);
+		if (data->frame > 10)
+			data->frame = 0;
+		if (data->ani > 20)
+			data->ani = 5;
+		if (data->frame == 0)
+		{
+			data->ani = 5;
+			data->frame++;
+			printf("ani = %d\n", data->ani);
+			return (data->ani);
+		}
+		if (data->frame % 2 == 0 && data->ani < 20)
+		{
+			printf("ani ee= %d\n", data->ani);
+			data->frame++;
+			if (data->ani > 20)
+			data->ani = 5;
+			return (data->ani++);
+		}
+		data->frame++;
+		printf("ani = %d\n", data->ani);
+		return (data->ani);
+	}
 	if (data->check == 1)
 	{
 		if (getFacingDirection(data->ray_angle) == 1)
@@ -441,7 +474,9 @@ int	get_ntxtr(t_data *data)
 			return (SO);
 		return (N);
 	}
+	return (1);
 }
+
 void	draw_img(t_data *data)
 {
 	int	m;
@@ -474,6 +509,7 @@ void	draw_img(t_data *data)
 		data->y_wind++;
 	}
 }
+
 void	wall(t_data *data)
 {
 	data->i = 0;
@@ -487,14 +523,6 @@ void	wall(t_data *data)
 		data->dist_proj_plane = (HEIGHT_WIN / 2) / tan(data->fov / 2);
 		data->wall_height = (TILE / data->distance) * data->dist_proj_plane;
 		data->y_wind = (HEIGHT_WIN / 2) - (data->wall_height / 2);
-		// if((int)data->wall_height <= 0)
-		//     data->wall_height = HEIGHT_WIN;
-		// if(data->Nimg == 3)
-		// {
-		//     printf("distance = %f\n", data->distance);
-		//     printf("dist_proj_plane = %f\n", data->dist_proj_plane);
-		//     printf("wall = %f\n", data->wall_height);
-		// }
 		if (data->y_wind < 0)
 			data->y_wind = 0;
 		data->y_img = 0;
@@ -507,7 +535,7 @@ void	floor_sky(t_data *data)
 	int				x;
 	unsigned int	sky;
 	unsigned int	gorund;
-		char *dst;
+	char			*dst;
 
 	x = 0;
 	sky = data->all->txt->F_CLOR;
@@ -522,6 +550,63 @@ void	floor_sky(t_data *data)
 		x++;
 	}
 }
+
+void	close_doors(t_data *data)
+{
+	int	x;
+	int	y;
+
+	x = 0;
+	y = 0;
+	while (y < data->all->y_of_map)
+	{
+		x = 0;
+		while (x < data->all->longest_line)
+		{
+			if (data->all->map[y][x] == 'T')
+				data->all->map[y][x] = 'D';
+			x++;
+		}
+		y++;
+	}
+}
+
+void	line_door(t_data *data)
+{
+	int	x;
+	int	y;
+
+	x = 0;
+	y = 0;
+	data->dx = (int)data->pos_x + (30) * cos(data->direction);
+	data->dy = (int)data->pos_y + (30) * sin(data->direction);
+	x = data->dx / TILE;
+	y = data->dy / TILE;
+	if (data->all->map[y][x] == 'D')
+	{
+		data->all->map[y][x] = 'T';
+		data->xd = x;
+		data->yd = y;
+	}
+	else
+	{
+		x = ((int)data->pos_x);
+		y = ((int)data->pos_y);
+		if ((data->all->map[y / TILE][x / TILE] != 'T') && (data->all->map[(y
+					+ TILE) / TILE][x / TILE] != 'T') && (data->all->map[y
+				/ TILE][(x + TILE) / TILE] != 'T') && (data->all->map[(y - TILE)
+				/ TILE][x / TILE] != 'T') && (data->all->map[y / TILE][(x
+					- TILE) / TILE] != 'T') // side
+			&& (data->all->map[(y + TILE) / TILE][(x + TILE) / TILE] != 'T')
+				&& (data->all->map[(y + TILE) / TILE][(x - TILE) / TILE] != 'T')
+				&& (data->all->map[(y - TILE) / TILE][(x + TILE) / TILE] != 'T')
+				&& (data->all->map[(y - TILE) / TILE][(x - TILE)
+				/ TILE] != 'T'))
+		{
+			close_doors(data);
+		}
+	}
+}
 void	draw_3D(t_data *data)
 {
 	int		x;
@@ -534,35 +619,9 @@ void	draw_3D(t_data *data)
 	y = 0;
 	data->fov = 60 * (M_PI / 180);
 	data->ray_angle = data->direction - (data->fov / 2);
+	line_door(data);
 	floor_sky(data);
 	wall(data);
-	//     int color;
-	//    while(y < data->all->y_of_map)
-	//    {
-	//        x = 0;
-	//        while(x < data->all->longest_line)
-	//        {
-	//            color = (data->all->map[y][x] == '1') ? 0x000000 : 0xFFFFFF;
-	//            my_mlx_pixel_put(data, x, y, color);
-	//            x++;
-	//        }
-	//        y++;
-	//    }
-	//     color = 0x000000;
-	//     dst = data->addr + ((int)(data->pos_y) * data->line_length
-			// + ((int)(data->pos_x) * (data->bits_per_pixel / 8)));
-	//              *(unsigned int *)dst = color;
-	// data->hi = 1;
-	// data->fov = 60 * (M_PI / 180);
-	// data->ray_angle = data->direction - (data->fov / 2);
-	// while(y < WIDTH_WIN)
-	// {
-	//      if(data->ray_angle > 2 * M_PI)
-	//         data->ray_angle = data->ray_angle - 2 * M_PI;
-	//     draw_ray(data, data->ray_angle);
-	//     data->ray_angle += data->fov / WIDTH_WIN;
-	//     y++;
-	// }
 	mlx_put_image_to_window(data->mlx_ptr, data->mlx_win, data->img, 0, 0);
 	renderMiniMap(data);
 }
@@ -578,16 +637,6 @@ int	player_collision(t_data *data)
 	y = data->pos_y;
 	y1 = TILE;
 	x1 = TILE;
-	// printf("first %c\n", data->all->map[y / y1][x / x1]);
-	// printf("twoo %c\n", data->all->map[(y + 10) / y1][(x + 10) / x1]);
-	// printf("three %c\n", data->all->map[(y + 10) / y1][x / x1]);
-	// printf("four %c\n", data->all->map[y / y1][(x + 10) / x1]);
-	// printf("y = %d x = %d\n", y +  1 / y1 , x / x1);
-	// if(data->all->map[(y + 3) / y1][x / TILE] == '1')
-	//         return(1);
-	// if(x + 1 / TILE < WIDTH_WIN && data->all->map[y / TILE][(x + 1)
-		// / TILE] == '1')
-	//         return(1);
 	if (data->all->map[(y + 5) / y1][(x + 5) / x1] == '1')
 		return (1);
 	if (data->all->map[(y - 5) / y1][(x - 5) / x1] == '1')
@@ -598,39 +647,19 @@ int	player_collision(t_data *data)
 		return (1);
 	if (data->all->map[y / y1][x / TILE] == '1')
 		return (1);
-	// else if(data->all->map[(y + 1) / y1][(x + 1) / x1] == '1')
-	//     return(1);
-	// else if(data->all->map[(y + 1) / y1][x / x1] == '1')
-	//         return(1);
-	// else if(data->all->map[y / y1][(x + 1) / x1] == '1')
-	//             return(1);
+	if (data->all->map[(y + 5) / y1][x / x1] == 'D')
+		return (1);
+	if (data->all->map[y / y1][(x + 5) / x1] == 'D')
+		return (1);
+	if (data->all->map[(y - 5) / y1][x / x1] == 'D')
+		return (1);
+	if (data->all->map[y / y1][(x - 5) / x1] == 'D')
+		return (1);
+	if (data->all->map[(y + 5) / y1][(x + 5) / x1] == 'D')
+		return (1);
 	return (0);
 }
-void sliding(t_data *data)
-{
-    printf("x != %d y =%d\n", (int)data->pos_x / TILE, (int)data->pos_y/ TILE);
-    if(data->key_w == 1)
-    {
-        data->pos_y -= sin(data->direction + M_2_PI) * SPEED;
-        data->pos_x -= cos(data->direction + M_2_PI) * SPEED;
-    }
-    else if(data->key_s == 1)
-    {
-        data->pos_y += sin(data->direction + M_2_PI) * SPEED;
-        data->pos_x += cos(data->direction + M_2_PI) * SPEED;
-    }
-    printf("x = %d y =%d\n", (int)data->pos_x / TILE, (int)data->pos_y/ TILE);
-    // else if(data->key_a == 1)
-    // {
-    //     data->pos_x += cos(data->direction + M_PI_2) * SIDES_SPEED;
-    //     data->pos_y += sin(data->direction + M_PI_2) * SIDES_SPEED;
-    // }
-    // else if(data->key_d == 1)
-    // {
-    //     data->pos_x -= cos(data->direction + M_PI_2) * SIDES_SPEED;
-    //     data->pos_y -= sin(data->direction + M_PI_2) * SIDES_SPEED;
-    // }
-}
+
 int	press_key(int key, t_data *data)
 {
 	if (key == KEY_A)
@@ -663,12 +692,9 @@ void	sides(t_data *data)
 	}
 	if (player_collision(data) == 1)
 	{
-		// sliding(data);
-        if(player_collision(data) == 1)
-        {
-            data->pos_x = data->old_x;
-            data->pos_y = data->old_y;
-        }
+		data->pos_x = data->old_x;
+		data->pos_y = data->old_y;
+		return ;
 	}
 }
 int	move_player(t_data *data)
@@ -777,28 +803,6 @@ int	close_window(t_data *data)
 	exit(0);
 }
 
-void	print_array(char **map)
-{
-	int	i;
-	int	x;
-
-	i = 0;
-	x = 0;
-	while (map[i])
-	{
-		x = 0;
-		printf("{");
-		while (map[i][x])
-		{
-			printf("%c", map[i][x]);
-			x++;
-		}
-		printf("}");
-		printf("\n");
-		i++;
-	}
-}
-
 int	move_player_left_right(int x, int y, t_data *data)
 {
 	static double	mousse_position = 0;
@@ -812,13 +816,13 @@ int	move_player_left_right(int x, int y, t_data *data)
 		return (0);
 	if (x >= mousse_position)
 	{
-		data->direction += (0.09) * fabs((double)x - mousse_position);
+		data->direction += (0.009) * fabs((double)x - mousse_position);
 		if (data->direction < 0)
 			data->direction = 2 * M_PI + data->direction;
 	}
 	else
 	{
-		data->direction -= (0.09) * fabs((double)x - mousse_position);
+		data->direction -= (0.009) * fabs((double)x - mousse_position);
 		if (data->direction < 0)
 			data->direction = 2 * M_PI + data->direction;
 	}
@@ -832,6 +836,11 @@ void	show_map(t_all *all, t_textr *txt)
 
 	data = malloc(sizeof(t_data));
 	data->hi = 0;
+	data->xd = 0;
+	data->yd = 0;
+	data->check = 0;
+	data->ani = 7;
+	data->frame = 0;
 	data->mytable = malloc(sizeof(double) * (WIDTH_WIN * 2));
 	data->garbage = all->garb;
 	ft_lst_add_back(&data->garbage, ft_lst_new(data->mytable));
@@ -839,7 +848,6 @@ void	show_map(t_all *all, t_textr *txt)
 	data->txt = txt;
 	all->x_of_map = all->longest_line;
 	find_player_position(all, data);
-	print_array(all->map);
 	keys_init(data);
 	data->mlx_ptr = mlx_init();
 	initail_image(data);

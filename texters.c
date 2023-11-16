@@ -50,7 +50,13 @@ void fix_map(t_all **all, int len)
     }
     new_map[i] = NULL;
      (*all)->map = new_map;
-    if(check_if_close((*all)->map) != -1 && check_for_valid_map((*all)->map) != -1)
+    i = 0;
+    while(i < (*all)->y_of_map)
+    {
+        printf("-->%s\n", (*all)->map[i]);
+        i++;
+    }
+    if(check_if_close((*all)->map) != -1 && check_for_valid_map((*all)->map) != -1 && check_for_doors(*all) != -1)
     {
        fill_the_rest_of_the_map(all);
     }
@@ -68,19 +74,18 @@ int check_for_valid_map(char **map)
     while(map[i])
     {
         x = 0;
-        printf("%s\n", map[i]);
         while (map[i][x])
         {
             if(map[i][x] == '0')
             {
-                if(i > 0 && (map[i - 1][x] == '\0' || map[i + 1][x] == '\0' || map[i - 1][x] == ' ' || map[i + 1][x] == '\t'))
+                if(i > 0 && (map[i - 1][x] == '\0' || map[i + 1][x] == '\0' || map[i - 1][x] == ' '))
                 {
-                    printf("unvalid ;)\n");
+                    printf("unvalid ;)\nERROR");
                    return(-1);
                 }
-                if(x > 0 && (map[i][x - 1] == '\0' ||map[i][x + 1] == '\0' || map[i][x - 1] == ' ' || map[i][x + 1] == '\t'))
+                if(x > 0 && (map[i][x - 1] == '\0' ||map[i][x + 1] == '\0' || map[i][x - 1] == ' '))
                 {
-                    printf("unvalid :)\n");
+                    printf("unvalid :)\nERROR");
                     return(-1);
                 }
             }
@@ -88,9 +93,13 @@ int check_for_valid_map(char **map)
         }
         i++;
     }
+    if(extra_check(map) == -1)
+    {
+        return(-1);
+    }
     if(ft_strchr(map[i - 1], '0'))
     {
-        printf("unvalid ;)\n");
+        printf("\n");
         return -1;
     }
     return(0);
@@ -104,8 +113,7 @@ int ft_atoi_num(t_textr *txt)
 }
 unsigned int RGBtoUint8(int R, int G, int B) 
 {
-  
-        return ((R << 16) | (G << 8) | B);
+    return ((R << 16) | (G << 8) | B);
 }
 
 void get_colers(t_textr *txtr)

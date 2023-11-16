@@ -59,122 +59,24 @@ void collect(t_garbage **garb, char **str)
     }
     ft_lst_add_back(garb, ft_lst_new(str));
 }
-int helper(unsigned int *arr, char *str, t_garbage **garb)
-{
-    char **spl;
-    int i;
-
-    i = 0;
-    spl = ft_split(str, ',');
-    collect(garb, spl);
-    while(spl[i])
-    {
-        arr[i] = ft_atoi(spl[i]);
-        if(arr[i] > 255)
-        {   i = 0;
-            return (-1);
-        }
-        i++;
-    }
-    return 0;
-}
-
-// void    draw_square(int i, int j, t_all *all, int color)
+// int helper(unsigned int *arr, char *str, t_garbage **garb)
 // {
-//     int x = 0;
-//     int y = 0;
-
-//     while (y < 64 - 1)
-//     {
-//         x = 0;
-//         while (x < 64 - 1)
-//         {
-//             mlx_pixel_put(all->mlx,all->win, i * 64 + y + 1 , j * 64 + x + 1, color);
-//             x++;
-//         }
-//         y++;
-//     }
-// }
-// void open_window(t_all **all)
-// {
+//     char **spl;
 //     int i;
-//     int x;
-//     int color;
-
 
 //     i = 0;
-//     x = 0;
-//     (*all)->mlx = mlx_init();
-//     (*all)->win = mlx_new_window((*all)->mlx, 66, (*all)->y_of_map * 64, "CUB3D");
-//     (*all)->img = mlx_new_image((*all)->mlx, 896, (*all)->y_of_map * 64);
-//     (*all)->addrs = mlx_get_data_addr((*all)->img, &(*all)->bits_per_pixel, &(*all)->size_line, &(*all)->endian);
-//     while((*all)->map[x])
+//     spl = ft_split(str, ',');
+//     collect(garb, spl);
+//     while(spl[i])
 //     {
-//         i = 0;
-//         while((*all)->map[x][i])
-//         {
-//             if((*all)->map[x][i] == '1')
-//             {
-//                 color = 0xFF5B38;
-//                 draw_square(x, i,(*all), color);
-//             }
-//             if((*all)->map[x][i] == '0')
-//             {
-//                 color = 0xB5B5B0;
-//                 draw_square(x, i,(*all), color);
-//             }
-//             if((*all)->map[x][i] == 'N')
-//             {
-//                 color = 0xB5B5B0;
-//                 draw_square(x, i,(*all), color);
-//             }
-//             i++;
+//         arr[i] = ft_atoi(spl[i]);
+//         if(arr[i] > 255)
+//         {   i = 0;
+//             return (-1);
 //         }
-//         x++;
+//         i++;
 //     }
-//     mlx_loop((*all)->mlx);
+//     return 0;
 // }
-// int main(int argc, char *argv[])
-// {
-//     t_all *all;
-//     t_textr *txtr;
-//     int len;
-//     len = 0;
-    
-//    if(argc > 1)
-//    {
-//    if (check_extionts(argv[1]) == -1 || all_in_one(&all, &txtr, argv) == -1)
-//    {
-//         printf("ERROR\n");
-//         return(0);
-//    }
-//     len = updatemap(all);
-//     count_x_y_of_the_map(&all);
-//     fix_map(&all, len);
-//     if((check_if_close(all->map)) == -1)
-//     {
-//         printf("ERROR1\n");
-//         return -1;
-//     }
-//     if(check_for_valid_map(all->map) == -1)
-//     {
-//         printf("ERROR2\n");
-//         return(-1);
-//     }
-//     if(check_final(txtr) == -1)
-//     {
-//        printf("ERROR3\n");
-//         return (-1);
-//     }
-//     if(ft_atoi_num(txtr) ==  -1)
-//     {
-//         printf("ERROR4\n");
-//         return(-1);
-//     }
-//     get_colers(txtr);
-//    }
-//    else 
-//     printf("messing file map ☠️ 👽\n");
-//     return(0);
-// }
+
 
