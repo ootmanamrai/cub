@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 13:09:47 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/16 23:51:01 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/18 02:30:02 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@
     #define KEY_A 0
     #define KEY_S 1
     #define KEY_D 2
-    #define SPEED 5
+    #define SPEED 8
     #define SIDES_SPEED 10
     #define ROTATION_ANGLE 0.05
     #define SHIFT 0
@@ -56,6 +56,7 @@
     #define W 2
     #define N 0
     #define SO 1
+    #define SPACE 49
 #endif
 void    show_map();
 int extra_check(char **map);
@@ -72,14 +73,19 @@ typedef struct s_txt_data
 }   t_all_txt;
 
 typedef struct	s_data {
-    t_all_txt *imgs[21];
+    t_all_txt *imgs[37];
     t_all_txt mini;
     t_all_txt big;
+    int frame1;
+    int Nimg1;
+    int frame2;
+    int ani1;
     int xd;
     int yd;
     int dx;
     int dy;
     int ani;
+    int space;
     int frame;
     int color;
     int mouse_left;

@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 16:30:44 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/16 23:55:56 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/18 02:34:38 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,8 @@ void	intercept_v(t_data *data)
 		x = data->x_intercept / TILE;
 		y = data->y_intercept / TILE;
 		if (y < data->all->y_of_map && x < data->all->x_of_map
-			&& (data->all->map[y][x] == '1' || data->all->map[y][x] == 'D'))
+			&& (data->all->map[y][x] == '1' || data->all->map[y][x] == 'D'
+				|| data->all->map[y][x] == 'A'))
 		{
 			data->found_wallv = 1;
 			break ;
@@ -251,44 +252,45 @@ int	get_pixel_color(t_data *data, int x, int y)
 	return (color);
 }
 
-void	init_data_txt(t_data *data)
+void	init_data_txt(t_data *data)// take path
 {
-	int	i;
-    int x;
-    char *img;
+	int		i;
+	int		x;
+	char	*img;
 
-    x = 0;
+	x = 0;
 	i = 0;
-    img = "img.xpm";
-	while (i < 21)
+
+	while (i < 37)
 	{
 		data->imgs[i] = malloc(sizeof(t_all_txt));
 		ft_lst_add_back(&data->garbage, ft_lst_new(data->imgs[i]));
-        if(i < 5)
+		if (i < 5)
 			data->imgs[i]->path = data->txt->S[i];
-         else
-            data->imgs[i]->path = ft_strjoin(ft_itoa(i), img);
-		
-            x = i;
+		else
+		{
+			img = ft_strjoin(ft_itoa(i), "img.xpm");
+			ft_lst_add_back(&data->garbage, ft_lst_new(img));
+			data->imgs[i]->path = ft_strjoin("./tool_bonus/", img);
+			ft_lst_add_back(&data->garbage, ft_lst_new(data->imgs[i]->path));
+		}
+		x = i;
 		i++;
 	}
 	data->imgs[i] = NULL;
 }
 
-void	initail_image(t_data *data)
+void	initail_image(t_data *data)//lead images
 {
 	int	i;
 
 	i = 0;
 	init_data_txt(data);
-	while (i < 21)
+	while (i < 37)
 	{
-		
-     
-        data->imgs[i]->img_ptr = mlx_xpm_file_to_image(data->mlx_ptr,
+		data->imgs[i]->img_ptr = mlx_xpm_file_to_image(data->mlx_ptr,
 				data->imgs[i]->path, &data->imgs[i]->width,
 				&data->imgs[i]->height);
-		printf("%s\n", data->imgs[i]->path);
 		if (!data->imgs[i]->img_ptr)
 		{
 			printf("file not exist\n");
@@ -403,7 +405,7 @@ void	renderMiniMap(t_data *data)
 		x = 0;
 		while (x < data->all->x_of_map)
 		{
-			if (data->all->map[y][x] == '1')
+			if (data->all->map[y][x] == '1' || data->all->map[y][x] == 'A')
 			{
 				data->color = 0x0000FF;
 				my_mlx_pixel_put(data, x, y, data->mini);
@@ -429,7 +431,9 @@ int	get_ntxtr(t_data *data)
 {
 	int	x;
 	int	y;
+	int i;
 
+	i = 0;
 	x = data->wall_hit_x / TILE;
 	y = data->wall_hit_y / TILE;
 	if (data->all->map[y][x] == 'D')
@@ -438,34 +442,43 @@ int	get_ntxtr(t_data *data)
 	}
 	if (data->all->map[y][x] == 'A')
 	{
-		printf("%c\n", data->all->map[y][x]);
-		if (data->frame > 10)
+		if (data->frame > 4000)
 			data->frame = 0;
-		if (data->ani > 20)
+		if (data->ani > 21)
 			data->ani = 5;
-		if (data->frame == 0)
+		if (data->frame % 4000 == 0)
 		{
-			data->ani = 5;
 			data->frame++;
-			printf("ani = %d\n", data->ani);
-			return (data->ani);
-		}
-		if (data->frame % 2 == 0 && data->ani < 20)
-		{
-			printf("ani ee= %d\n", data->ani);
-			data->frame++;
-			if (data->ani > 20)
-			data->ani = 5;
+			if (data->ani > 21)
+				data->ani = 4;
 			return (data->ani++);
 		}
 		data->frame++;
-		printf("ani = %d\n", data->ani);
 		return (data->ani);
 	}
 	if (data->check == 1)
 	{
 		if (getFacingDirection(data->ray_angle) == 1)
-			return (E);
+		{
+			if(data->space == 0)
+				return (E);
+			if (data->frame1 == 8000)
+				data->frame1 = 0;
+			if (data->frame1 % 8000 == 0)
+			{
+				data->frame1++;
+				if (data->ani1 > 36)//24
+				{
+					data->ani1 = 26;
+				}
+				return (data->ani1++);
+			}
+			data->frame1++;
+			if (data->ani1 > 36)
+				data->ani1 = 26;
+			return (data->ani1);
+		
+		}
 		return (W);
 	}
 	else
@@ -578,8 +591,8 @@ void	line_door(t_data *data)
 
 	x = 0;
 	y = 0;
-	data->dx = (int)data->pos_x + (30) * cos(data->direction);
-	data->dy = (int)data->pos_y + (30) * sin(data->direction);
+	data->dx = (int)data->pos_x + (60) * cos(data->direction);
+	data->dy = (int)data->pos_y + (60) * sin(data->direction);
 	x = data->dx / TILE;
 	y = data->dy / TILE;
 	if (data->all->map[y][x] == 'D')
@@ -637,6 +650,16 @@ int	player_collision(t_data *data)
 	y = data->pos_y;
 	y1 = TILE;
 	x1 = TILE;
+	if (data->all->map[(y + 5) / y1][(x + 5) / x1] == 'A')
+		return (1);
+	if (data->all->map[(y - 5) / y1][(x - 5) / x1] == 'A')
+		return (1);
+	if (data->all->map[(y - 5) / y1][x / x1] == 'A')
+		return (1);
+	if (data->all->map[y / y1][(x - 5) / x1] == 'A')
+		return (1);
+	if (data->all->map[y / y1][x / TILE] == 'A')
+		return (1);
 	if (data->all->map[(y + 5) / y1][(x + 5) / x1] == '1')
 		return (1);
 	if (data->all->map[(y - 5) / y1][(x - 5) / x1] == '1')
@@ -674,6 +697,10 @@ int	press_key(int key, t_data *data)
 		data->key_left = 1;
 	if (key == KEY_RIGHT)
 		data->key_right = 1;
+	if(key == SPACE && data->space == 0)
+		data->space = 1;
+	else if(key == SPACE && data->space == 1)
+		data->space = 0;
 	return (0);
 }
 void	sides(t_data *data)
@@ -789,6 +816,7 @@ int	release_key(int key, t_data *data)
 void	keys_init(t_data *data)
 {
 	data->key_a = 0;
+	data->space = 0;
 	data->mouse_left = 0;
 	data->mouse_right = 0;
 	data->key_s = 0;
@@ -841,6 +869,8 @@ void	show_map(t_all *all, t_textr *txt)
 	data->check = 0;
 	data->ani = 7;
 	data->frame = 0;
+	data->ani1 = 26;
+	data->frame1 = 0;
 	data->mytable = malloc(sizeof(double) * (WIDTH_WIN * 2));
 	data->garbage = all->garb;
 	ft_lst_add_back(&data->garbage, ft_lst_new(data->mytable));

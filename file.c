@@ -152,3 +152,4 @@ int	start_reading_map(char *line)
 		return (-1);
 	return (0);
 }
+//89

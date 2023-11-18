@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS =  -fsanitize=address  -g3 #-Wall -Werror -Wextra -fsanitize=address -g3
+CFLAGS =  #-fsanitize=address  -g3 #-Wall -Werror -Wextra -fsanitize=address -g3
 RM = rm -f
 FILES = lunchmap.c file_bonus.c cub3d.c leaks.c ../parsing.c ../texters.c ../more_files.c ../libft/ft_bzero.c \
         ../libft/ft_strjoin.c ../libft/ft_atoi.c ../libft/ft_strlen.c ../libft/ft_calloc.c \

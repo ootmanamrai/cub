@@ -6,7 +6,7 @@
 /*   By: otamrani <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 23:11:15 by otamrani          #+#    #+#             */
-/*   Updated: 2023/11/09 18:48:02 by otamrani         ###   ########.fr       */
+/*   Updated: 2023/11/17 23:42:49 by otamrani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,18 +271,18 @@ int main(int argc, char *argv[])
     }
    if(check_for_doors(all) == -1)
    {
-       printf("unvalid\nERROR\n");
+       printf("unvalid\nERROR 1\n");
        return(-1);
    }
    get_door(&all);
     if(check_final(txtr) == -1)
     {
-       printf("unvalid \nERROR\n");
+       printf("unvalid \nERROR 2\n");
         return (-1);
     }
     if(ft_atoi_num(txtr) ==  -1)
     {
-        printf("unvalid \nERROR\n");
+        printf("unvalid \nERROR 3\n");
         return(-1);
     }
     get_colers(txtr);
